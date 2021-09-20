@@ -7,6 +7,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -14,11 +15,12 @@ import java.util.Optional;
 public class LibValue {
     private static final Map<String, String> valueString = new HashMap<>();
     private static final Map<String, Integer> valueInteger = new HashMap<>();
+    private static final Map<String, ArrayList<Object>> valueArray = new HashMap<>();
     public static Map<String, String> session = new HashMap<>();
     public static Map<String, String> cmdAlias = new HashMap<>();
     public static JDA jda = null;
     public static EventWaiter eventWaiter = null;
-    static String CONFIG_PATH = "./Config.json";
+    public static String CONFIG_PATH;
     private static String configLastHash = "";
     private static JSONObject configJSON = null;
 
@@ -35,20 +37,22 @@ public class LibValue {
         for (String key : jsonObject.keySet()) {
             Object currentObject = jsonObject.get(key);
 
-            if (currentObject instanceof String) {
+            if (currentObject instanceof String)
                 valueString.put(key, (String) currentObject);
-            }
 
-            if (currentObject instanceof Integer) {
+            if (currentObject instanceof Integer)
                 valueInteger.put(key, (Integer) currentObject);
-            }
 
-            if (currentObject instanceof JSONObject) {
+            if (currentObject instanceof JSONObject)
                 analyzeConfig((JSONObject) currentObject);
-            }
 
             if (currentObject instanceof JSONArray) {
-                //とりあえず手動
+                ArrayList<Object> arrayList = new ArrayList<>();
+
+                for (Object object : ((JSONArray) currentObject))
+                    arrayList.add(object);
+
+                valueArray.put(key, arrayList);
             }
         }
     }
@@ -59,5 +63,9 @@ public class LibValue {
 
     public static Integer getInt(String key) {
         return valueInteger.get(key);
+    }
+
+    public static ArrayList<Object> getArray(String key) {
+        return valueArray.get(key);
     }
 }

@@ -4,7 +4,9 @@ import com.jaoafa.jaotone.Framework.Command.CmdEventContainer;
 import com.jaoafa.jaotone.Framework.Command.CmdOptionContainer;
 import com.jaoafa.jaotone.Framework.Command.CmdType;
 import com.jaoafa.jaotone.Lib.Discord.LibEmbedColor;
+import com.jaoafa.jaotone.Lib.Discord.LibPrefix;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -12,10 +14,23 @@ import org.jetbrains.annotations.NotNull;
 public class TextHooker extends ListenerAdapter {
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
-        if (!event.getMessage().getContentRaw().startsWith("^")) return;
+        if (!event.getChannelType().equals(ChannelType.TEXT)) {
+            event.getMessage().replyEmbeds(new EmbedBuilder()
+                    .setTitle("## ERROR ##")
+                    .setDescription("テキストチャンネル以外では利用できません！")
+                    .setColor(LibEmbedColor.failure)
+                    .build()
+            ).queue();
+            return;
+        }
+        if (LibPrefix.getPrefix(event.getGuild().getId()) == null)
+            LibPrefix.setPrefix(event.getGuild().getId(), "^");
 
-        TextAnalysis.TextAnalysisResult result = TextAnalysis.analyzeAsText(event.getMessage().getContentRaw());
+        if (!event.getMessage().getContentRaw().startsWith(
+                LibPrefix.getPrefix(event.getGuild().getId())
+        )) return;
 
+        TextAnalysis.TextAnalysisResult result = TextAnalysis.analyzeAsText(event.getGuild().getId(), event.getMessage().getContentRaw());
         TextAnalysis.ExecutionErrorType errorType = result.errorType();
 
         if (!errorType.equals(TextAnalysis.ExecutionErrorType.NoError)) {

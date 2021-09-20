@@ -9,13 +9,25 @@ import com.jaoafa.jaotone.Lib.jaoTone.LibValue;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 
-import static com.jaoafa.jaotone.Lib.Universal.LibFlow.Type.Failure;
-import static com.jaoafa.jaotone.Lib.Universal.LibFlow.Type.Task;
+import java.io.File;
+
+import static com.jaoafa.jaotone.Lib.Universal.LibFlow.Type.*;
 import static com.jaoafa.jaotone.Lib.Universal.LibFlow.print;
 
 public class Main {
     public static void main(String[] args) {
         print(Task, "起動中...");
+
+
+        String configPath = args.length > 0 ? args[0] : "./config.json";
+        if (!new File(configPath).exists()) {
+            print(Failure, "設定ファイル %s が存在しません".formatted(configPath));
+            return;
+        } else {
+            LibValue.CONFIG_PATH = configPath;
+            print(Success, "設定ファイル %s を使用します".formatted(configPath));
+        }
+
         LibValue.reload();
         EventWaiter eventWaiter = new EventWaiter();
         JDABuilder jdaBuilder =

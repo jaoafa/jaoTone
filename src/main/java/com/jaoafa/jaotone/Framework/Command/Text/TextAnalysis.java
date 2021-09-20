@@ -2,6 +2,7 @@ package com.jaoafa.jaotone.Framework.Command.Text;
 
 import com.jaoafa.jaotone.Framework.Command.CmdOptionIndex;
 import com.jaoafa.jaotone.Framework.Command.CmdRouter;
+import com.jaoafa.jaotone.Lib.Discord.LibPrefix;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 import java.util.ArrayList;
@@ -10,12 +11,18 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class TextAnalysis {
-    public static TextAnalysisResult analyzeAsText(String text) {
-        List<String> options = new LinkedList(Arrays.asList(text.split(" ")));
+    static String isChannel = "<#[0-9]+>"; //Channel
+    static String isRole = "<@&[0-9]+>"; //Role
+    static String isBoolean = "[Tt]rue|[Ff]alse";
+    static String isMentionable = "<@(&??|!??)[0-9]+>|@everyone"; //Role or User or Everyone
+    static String isUser = "<@!??[0-9]+>"; //User
+
+    public static TextAnalysisResult analyzeAsText(String guildId, String text) {
+        LinkedList<String> options = new LinkedList<>(Arrays.asList(text.split(" ")));
         ArrayList<CmdOptionIndex> optionIndexList = new ArrayList<>();
 
         List<CmdRouter.CmdRoutingData> filteredRoutingData = CmdRouter.routeList.stream().filter(
-                index -> index.cmdName().equals(options.get(0).replace("^", ""))
+                index -> index.cmdName().equals(options.get(0).substring(LibPrefix.getPrefix(guildId).length()))
         ).toList();
 
         CmdOptionLengthType cmdOptionLengthType = null;
@@ -51,6 +58,7 @@ public class TextAnalysis {
                         index.groupName().equals(options.get(1)) && index.subCmdName().equals(options.get(2))
                 ).findFirst().orElse(null);
                 //コマンド+グループ+サブコマンド分削除
+
                 options.remove(0);
                 options.remove(0);
                 options.remove(0);
@@ -61,12 +69,6 @@ public class TextAnalysis {
             return new TextAnalysisResult(null, null, ExecutionErrorType.CommandNotFound);
 
         if (routingData.optionData().length > 0) {
-            String isChannel = "<#[0-9]+>"; //Channel
-            String isRole = "<@&[0-9]+>"; //Role
-            String isBoolean = "[Tt]rue|[Ff]alse";
-            String isMentionable = "<@(&??|!??)[0-9]+>|@everyone"; //Role or User or Everyone
-            String isUser = "<@!??[0-9]+>"; //User
-
             String isOptionWithName = ".+:.+";
 
             boolean isMixedOptionForm = false;
@@ -90,48 +92,26 @@ public class TextAnalysis {
                         String optionName = optionNameAndIndex[0];
                         String optionIndex = optionNameAndIndex[1];
 
-                        OptionData currentOptionData = Arrays.stream(routingData.optionData()).filter(
-                                optionData -> optionData.getName().equals(optionName)
+                        OptionData optionData = Arrays.stream(routingData.optionData()).filter(
+                                data -> data.getName().equals(optionName)
                         ).findFirst().orElse(null);
 
-                        if (currentOptionData == null)
+                        if (optionData == null)
                             return new TextAnalysisResult(routingData, null, ExecutionErrorType.InvalidOptionName);
 
-                        //todo 型チェック系functionとかにまとめる
-                        boolean isValidOptionType = false;
-                        switch (currentOptionData.getType()) {
-                            //もともとがStringなので
-                            case STRING -> isValidOptionType = true;
-                            //パースしてみる
-                            case INTEGER -> {
-                                try {
-                                    Integer.parseInt(optionIndex);
-                                    isValidOptionType = true;
-                                } catch (NumberFormatException ignored) {
-                                }
-                            }
-                            //以下正規表現ゴリゴリ
-                            case BOOLEAN -> isValidOptionType = optionIndex.matches(isBoolean);
-                            case CHANNEL -> isValidOptionType = optionIndex.matches(isChannel);
-                            case ROLE -> isValidOptionType = optionIndex.matches(isRole);
-                            case MENTIONABLE -> isValidOptionType = optionIndex.matches(isMentionable);
-                            case USER -> isValidOptionType = optionIndex.matches(isUser);
-                        }
-
-                        if (!isValidOptionType)
+                        if (checkIsInvalidOptionType(optionData, optionIndex))
                             return new TextAnalysisResult(routingData, null, ExecutionErrorType.InvalidOptionType);
 
-                        optionIndexList.add(new CmdOptionIndex(currentOptionData, optionIndex));
+                        optionIndexList.add(new CmdOptionIndex(optionData, optionIndex));
                     }
-                    //全ての必須Optionが入力されているか確かめる
-                    //fixme ユーザーが入力したやつも必須オプションだけにフィルターして比較しなきゃいけない
-                    if (Arrays.stream(routingData.optionData()).filter(OptionData::isRequired).toList().size() > options.size())
+
+                    if (Arrays.stream(routingData.optionData()).filter(OptionData::isRequired).toList().size() >
+                            optionIndexList.stream().filter(cmdOptionIndex -> cmdOptionIndex.optionData().isRequired()).toList().size())
                         return new TextAnalysisResult(routingData, null, ExecutionErrorType.NotEnoughOptions);
                 }
                 case OptionWithNoName -> {
                     int current = 0;
                     for (OptionData optionData : routingData.optionData()) {
-                        boolean isValidOptionType = false;
 
                         String optionIndex;
                         try {
@@ -143,26 +123,8 @@ public class TextAnalysis {
                                 continue;
                             }
                         }
-                        switch (optionData.getType()) {
-                            //もともとがStringなので
-                            case STRING -> isValidOptionType = true;
-                            //パースしてみる
-                            case INTEGER -> {
-                                try {
-                                    Integer.parseInt(optionIndex);
-                                    isValidOptionType = true;
-                                } catch (NumberFormatException ignored) {
-                                }
-                            }
-                            //以下正規表現ゴリゴリ
-                            case BOOLEAN -> isValidOptionType = optionIndex.matches(isBoolean);
-                            case CHANNEL -> isValidOptionType = optionIndex.matches(isChannel);
-                            case ROLE -> isValidOptionType = optionIndex.matches(isRole);
-                            case MENTIONABLE -> isValidOptionType = optionIndex.matches(isMentionable);
-                            case USER -> isValidOptionType = optionIndex.matches(isUser);
-                        }
 
-                        if (!isValidOptionType)
+                        if (checkIsInvalidOptionType(optionData, optionIndex))
                             return new TextAnalysisResult(routingData, null, ExecutionErrorType.InvalidOptionType);
 
                         optionIndexList.add(new CmdOptionIndex(optionData, optionIndex));
@@ -174,14 +136,34 @@ public class TextAnalysis {
         return new TextAnalysisResult(routingData, optionIndexList, ExecutionErrorType.NoError);
     }
 
+    private static boolean checkIsInvalidOptionType(OptionData optionData, String optionIndex) {
+        return !switch (optionData.getType()) {
+            //もともとがStringなので
+            case STRING -> true;
+            //パースしてみる
+            case INTEGER -> {
+                try {
+                    Integer.parseInt(optionIndex);
+                    yield true;
+                } catch (NumberFormatException ignored) {
+                    yield false;
+                }
+            }
+            //以下正規表現ゴリゴリ
+            case BOOLEAN -> optionIndex.matches(isBoolean);
+            case CHANNEL -> optionIndex.matches(isChannel);
+            case ROLE -> optionIndex.matches(isRole);
+            case MENTIONABLE -> optionIndex.matches(isMentionable);
+            case USER -> optionIndex.matches(isUser);
+            default -> false;
+        };
+    }
     public enum ExecutionErrorType {
         NoError, InvalidOptionType, NotEnoughOptions, CommandNotFound, MixedOptionForm, InvalidOptionName
     }
-
     public enum OptionForm {
         OptionWithName, OptionWithNoName
     }
-
     private enum CmdOptionLengthType {
         CMD, CMD_SUBCMD, CMD_GROUP_SUBCMD
     }

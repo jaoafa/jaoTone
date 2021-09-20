@@ -43,12 +43,12 @@ public class Cmd_Alpha implements CmdSubstrate {
     }
 
     void phileoNormalAlpha(JDA jda, Guild guild, MessageChannel channel, ChannelType type, Member member, User user,
-                          CmdOptionContainer options, CmdEventContainer events) {
+                           CmdOptionContainer options, CmdEventContainer events) {
         LibReply.reply(events, "オ、オオwwwwwwwwオレフィレオノーマルアルファwwwwwwww最近めっちょふぁぼられてんねんオレwwwwwwwwエゴサとかかけるとめっちょ人気やねんwwwwァァァァァァァwwwクソアルファを見下しながら食べるエビフィレオは一段とウメェなァァァァwwwwwwww");
     }
 
     void phileoSuperAlpha(JDA jda, Guild guild, MessageChannel channel, ChannelType type, Member member, User user,
-                         CmdOptionContainer options, CmdEventContainer events) {
+                          CmdOptionContainer options, CmdEventContainer events) {
         LibReply.reply(events, "オ、オオwwwwwwwwオレフィレオスーパーアルファwwwwwwww最近めっちょふぁぼられてんねんオレwwwwwwwwエゴサとかかけるとめっちょ人気やねんwwwwァァァァァァァwwwクソアルファを見下しながら食べるエビフィレオは一段とウメェなァァァァwwwwwwww");
     }
 }
