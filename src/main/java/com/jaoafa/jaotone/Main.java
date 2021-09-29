@@ -18,7 +18,6 @@ public class Main {
     public static void main(String[] args) {
         print(Task, "起動中...");
 
-
         String configPath = args.length > 0 ? args[0] : "./config.json";
         if (!new File(configPath).exists()) {
             print(Failure, "設定ファイル %s が存在しません".formatted(configPath));

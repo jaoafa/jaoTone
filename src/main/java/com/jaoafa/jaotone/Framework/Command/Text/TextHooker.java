@@ -18,11 +18,12 @@ public class TextHooker extends ListenerAdapter {
             event.getMessage().replyEmbeds(new EmbedBuilder()
                     .setTitle("## ERROR ##")
                     .setDescription("テキストチャンネル以外では利用できません！")
-                    .setColor(LibEmbedColor.failure)
+                    .setColor(LibEmbedColor.FAILURE)
                     .build()
             ).queue();
             return;
         }
+
         if (LibPrefix.getPrefix(event.getGuild().getId()) == null)
             LibPrefix.setPrefix(event.getGuild().getId(), "^");
 
@@ -30,23 +31,22 @@ public class TextHooker extends ListenerAdapter {
                 LibPrefix.getPrefix(event.getGuild().getId())
         )) return;
 
-        TextAnalysis.TextAnalysisResult result = TextAnalysis.analyzeAsText(event.getGuild().getId(), event.getMessage().getContentRaw());
+        TextAnalysis.TextAnalysisResult result =
+                TextAnalysis.analyzeAsText(event.getGuild().getId(), event.getMessage().getContentRaw());
         TextAnalysis.ExecutionErrorType errorType = result.errorType();
 
         if (!errorType.equals(TextAnalysis.ExecutionErrorType.NoError)) {
-            String errorMessage = switch (errorType) {
-                case CommandNotFound -> "コマンドが見つかりませんでした";
-                case InvalidOptionName -> "オプション名が不正です";
-                case InvalidOptionType -> "オプションタイプが不正です";
-                case MixedOptionForm -> "オプション記述が不正です";
-                case NotEnoughOptions -> "必須オプションが足りません";
-                default -> "";
-            };
-
             event.getMessage().replyEmbeds(new EmbedBuilder()
                     .setTitle("## ERROR ##")
-                    .setDescription(errorMessage)
-                    .setColor(LibEmbedColor.failure)
+                    .setDescription(switch (errorType) {
+                        case CommandNotFound -> "コマンドが見つかりませんでした";
+                        case InvalidOptionName -> "オプション名が不正です";
+                        case InvalidOptionType -> "オプションタイプが不正です";
+                        case MixedOptionForm -> "オプション記述が不正です";
+                        case NotEnoughOptions -> "必須オプションが足りません";
+                        default -> "";
+                    })
+                    .setColor(LibEmbedColor.FAILURE)
                     .build()
             ).queue();
             return;

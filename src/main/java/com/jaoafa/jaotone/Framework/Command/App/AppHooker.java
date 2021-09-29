@@ -25,7 +25,7 @@ public class AppHooker extends ListenerAdapter {
             event.replyEmbeds(new EmbedBuilder()
                     .setTitle("## NOT FOUND ##")
                     .setDescription(errorMessage)
-                    .setColor(LibEmbedColor.failure)
+                    .setColor(LibEmbedColor.FAILURE)
                     .build()
             ).queue();
             return;
