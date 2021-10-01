@@ -1,4 +1,4 @@
-package com.jaoafa.jaotone.Command;
+package com.jaoafa.jaotone.Command.jaodev;
 
 import com.jaoafa.jaotone.Framework.Command.Builder.BuildCmd;
 import com.jaoafa.jaotone.Framework.Command.Builder.BuildGroup;
@@ -8,14 +8,15 @@ import com.jaoafa.jaotone.Framework.Command.CmdOptionContainer;
 import com.jaoafa.jaotone.Framework.Command.CmdSubstrate;
 import com.jaoafa.jaotone.Lib.Discord.LibReply;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
-public class Cmd_Alpha implements CmdSubstrate {
+public class Cmd_DevAlpha implements CmdSubstrate {
     @Override
     public BuildCmd builder() {
-        return new BuildCmd("alpha", "オレをアルファにします。")
+        return new BuildCmd("devalpha", "オレをアルファにします。", member -> member.hasPermission(Permission.MESSAGE_MANAGE))
                 .buildWithSubCmdGroup(
                         new BuildGroup("ebi", "エビを食べます。")
                                 .addSubCmd(

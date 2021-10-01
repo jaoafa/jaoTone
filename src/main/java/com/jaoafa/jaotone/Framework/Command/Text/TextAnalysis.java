@@ -2,13 +2,11 @@ package com.jaoafa.jaotone.Framework.Command.Text;
 
 import com.jaoafa.jaotone.Framework.Command.CmdOptionIndex;
 import com.jaoafa.jaotone.Framework.Command.CmdRouter;
+import com.jaoafa.jaotone.Framework.Command.CmdScope;
 import com.jaoafa.jaotone.Lib.Discord.LibPrefix;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class TextAnalysis {
     static String isChannel = "<#[0-9]+>"; //Channel
@@ -133,6 +131,11 @@ public class TextAnalysis {
                 }
             }
         }
+        Map<String, String> scopeList = CmdScope.scopeList;
+        //Scopeが有効であり、GuildIDが一致しない場合
+        if (scopeList.containsKey(routingData.cmdName()) && !scopeList.get(scopeList.get(routingData.cmdName())).equals(guildId))
+            return new TextAnalysisResult(routingData, optionIndexList, ExecutionErrorType.CommandNotFound);
+
         return new TextAnalysisResult(routingData, optionIndexList, ExecutionErrorType.NoError);
     }
 
@@ -158,12 +161,15 @@ public class TextAnalysis {
             default -> false;
         };
     }
+
     public enum ExecutionErrorType {
         NoError, InvalidOptionType, NotEnoughOptions, CommandNotFound, MixedOptionForm, InvalidOptionName
     }
+
     public enum OptionForm {
         OptionWithName, OptionWithNoName
     }
+
     private enum CmdOptionLengthType {
         CMD, CMD_SUBCMD, CMD_GROUP_SUBCMD
     }

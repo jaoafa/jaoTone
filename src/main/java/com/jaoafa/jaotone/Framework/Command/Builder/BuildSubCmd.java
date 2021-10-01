@@ -14,10 +14,8 @@ public class BuildSubCmd {
     public BuildSubCmd(@NotNull String name, @NotNull String description,
                        @NotNull CmdFunction function, @Nullable OptionData... options) {
         subCmdData = new SubcommandData(name, description);
-        routingData = new CmdRouter.CmdRoutingData(null, null, name, function, options);
+        routingData = new CmdRouter.CmdRoutingData(null, null, name, null, null, function, options);
 
-        if (options.length != 0) {
-            this.subCmdData.addOptions(options);
-        }
+        if (options.length != 0) this.subCmdData.addOptions(options);
     }
 }

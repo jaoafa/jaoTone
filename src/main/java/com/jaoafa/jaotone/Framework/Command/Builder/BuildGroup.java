@@ -33,6 +33,8 @@ public class BuildGroup {
                     subCmdRoutingData.cmdName(),
                     name,
                     subCmdRoutingData.subCmdName(),
+                    null,
+                    null,
                     subCmdRoutingData.function(),
                     subCmdRoutingData.optionData()
             ));

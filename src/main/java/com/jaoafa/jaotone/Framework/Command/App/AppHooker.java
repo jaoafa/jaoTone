@@ -5,9 +5,12 @@ import com.jaoafa.jaotone.Framework.Command.CmdOptionContainer;
 import com.jaoafa.jaotone.Framework.Command.CmdType;
 import com.jaoafa.jaotone.Lib.Discord.LibEmbedColor;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.function.Function;
 
 public class AppHooker extends ListenerAdapter {
     @Override
@@ -25,6 +28,18 @@ public class AppHooker extends ListenerAdapter {
             event.replyEmbeds(new EmbedBuilder()
                     .setTitle("## NOT FOUND ##")
                     .setDescription(errorMessage)
+                    .setColor(LibEmbedColor.FAILURE)
+                    .build()
+            ).queue();
+            return;
+        }
+
+        Function<Member, Boolean> checkPermission = result.routingData().checkPermission();
+
+        if (checkPermission != null && !checkPermission.apply(event.getMember())) {
+            event.replyEmbeds(new EmbedBuilder()
+                    .setTitle("## NOT PERMITTED ##")
+                    .setDescription("権限がありません")
                     .setColor(LibEmbedColor.FAILURE)
                     .build()
             ).queue();

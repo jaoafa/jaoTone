@@ -7,9 +7,12 @@ import com.jaoafa.jaotone.Lib.Discord.LibEmbedColor;
 import com.jaoafa.jaotone.Lib.Discord.LibPrefix;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.ChannelType;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.function.Function;
 
 public class TextHooker extends ListenerAdapter {
     @Override
@@ -24,15 +27,17 @@ public class TextHooker extends ListenerAdapter {
             return;
         }
 
-        if (LibPrefix.getPrefix(event.getGuild().getId()) == null)
-            LibPrefix.setPrefix(event.getGuild().getId(), "^");
+        String guildId = event.getGuild().getId();
+
+        if (LibPrefix.getPrefix(guildId) == null)
+            LibPrefix.setPrefix(guildId, "^");
 
         if (!event.getMessage().getContentRaw().startsWith(
-                LibPrefix.getPrefix(event.getGuild().getId())
+                LibPrefix.getPrefix(guildId)
         )) return;
 
         TextAnalysis.TextAnalysisResult result =
-                TextAnalysis.analyzeAsText(event.getGuild().getId(), event.getMessage().getContentRaw());
+                TextAnalysis.analyzeAsText(guildId, event.getMessage().getContentRaw());
         TextAnalysis.ExecutionErrorType errorType = result.errorType();
 
         if (!errorType.equals(TextAnalysis.ExecutionErrorType.NoError)) {
@@ -46,6 +51,18 @@ public class TextHooker extends ListenerAdapter {
                         case NotEnoughOptions -> "必須オプションが足りません";
                         default -> "";
                     })
+                    .setColor(LibEmbedColor.FAILURE)
+                    .build()
+            ).queue();
+            return;
+        }
+
+        Function<Member, Boolean> checkPermission = result.routingData().checkPermission();
+
+        if (checkPermission != null && !checkPermission.apply(event.getMember())) {
+            event.getMessage().replyEmbeds(new EmbedBuilder()
+                    .setTitle("## NOT PERMITTED ##")
+                    .setDescription("権限がありません")
                     .setColor(LibEmbedColor.FAILURE)
                     .build()
             ).queue();
