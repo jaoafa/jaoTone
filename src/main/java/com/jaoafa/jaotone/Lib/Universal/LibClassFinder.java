@@ -1,5 +1,9 @@
 package com.jaoafa.jaotone.Lib.Universal;
 
+import com.jaoafa.jaotone.Framework.Command.Builder.BuildCmd;
+import com.jaoafa.jaotone.Framework.Command.CmdSubstrate;
+import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+
 import java.io.File;
 import java.net.JarURLConnection;
 import java.net.URL;
@@ -8,6 +12,10 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+
+import static com.jaoafa.jaotone.Lib.Universal.LibFlow.Type.Failure;
+import static com.jaoafa.jaotone.Lib.Universal.LibFlow.Type.Success;
+import static com.jaoafa.jaotone.Lib.Universal.LibFlow.print;
 
 public class LibClassFinder {
     private final ClassLoader classLoader;
@@ -69,6 +77,21 @@ public class LibClassFinder {
         throw new IllegalArgumentException("Unsupported Class Load Protodol[" + protocol + "]");
     }
 
+    public List<Class<?>> findClassesStartsWith(String root,String prefix) throws Exception {
+        List<Class<?>> result = new ArrayList<>();
+        for (Class<?> foundClass : findClasses(root)) {
+            if (!foundClass.getSimpleName().startsWith(prefix)
+                    || foundClass.getEnclosingClass() != null
+                    || foundClass.getName().contains("$")) {
+                print(Failure, "%s は %s から始まりません。スキップします...".formatted(foundClass.getSimpleName(),prefix));
+                continue;
+            }
+            result.add(foundClass);
+            print(Success, "%s のチェックが完了しました".formatted(foundClass.getSimpleName()));
+        }
+        return result;
+    }
+
     private List<Class<?>> findClassesWithFile(String packageName, File dir) throws Exception {
         List<Class<?>> classes = new ArrayList<Class<?>>();
 
@@ -110,4 +133,6 @@ public class LibClassFinder {
 
         return classes;
     }
+
+
 }

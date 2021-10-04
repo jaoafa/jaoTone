@@ -2,6 +2,7 @@ package com.jaoafa.jaotone.Lib.jaoTone;
 
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import com.jaoafa.jaotone.Lib.Universal.LibFile;
+import com.jaoafa.jaotone.Main;
 import net.dv8tion.jda.api.JDA;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.json.JSONArray;
@@ -21,8 +22,10 @@ public class LibValue {
     public static JDA jda = null;
     public static EventWaiter eventWaiter = null;
     public static String CONFIG_PATH;
+    public static String ROOT_PACKAGE = Main.class.getPackage().getName();
     private static String configLastHash = "";
     private static JSONObject configJSON = null;
+
 
     public static void reload() {
         if (!configLastHash.equals(DigestUtils.md5Hex(LibFile.read(CONFIG_PATH)))) {

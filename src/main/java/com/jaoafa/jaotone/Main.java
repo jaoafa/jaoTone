@@ -1,6 +1,7 @@
 package com.jaoafa.jaotone;
 
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
+import com.jaoafa.jaotone.Framework.Action.ActionRecorder;
 import com.jaoafa.jaotone.Framework.Command.App.AppHooker;
 import com.jaoafa.jaotone.Framework.Command.App.AppRecorder;
 import com.jaoafa.jaotone.Framework.Command.Text.TextHooker;
@@ -44,6 +45,7 @@ public class Main {
             LibValue.jda = jdaBuilder.build().awaitReady();
             LibValue.eventWaiter = eventWaiter;
             new AppRecorder(LibValue.jda);
+            new ActionRecorder();
         } catch (Exception e) {
             print(Failure, "ログインに失敗しました。終了します。");
             e.printStackTrace();
