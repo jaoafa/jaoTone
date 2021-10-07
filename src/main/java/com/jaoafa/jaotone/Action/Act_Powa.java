@@ -27,7 +27,6 @@ public class Act_Powa implements ActionSubstrate {
     }
 
 
-
     private void literalpowa(JDA jda, Guild guild, MessageChannel channel, ChannelType channelType, Member member, User user, JSONObject jsonObject, ButtonClickEvent event) {
 
     }

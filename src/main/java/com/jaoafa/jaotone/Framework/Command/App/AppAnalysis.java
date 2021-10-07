@@ -7,7 +7,6 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.function.Consumer;
 
 public class AppAnalysis {
@@ -31,7 +30,7 @@ public class AppAnalysis {
 
         for (OptionMapping option : event.getOptions()) {
             OptionData currentOptionData =
-                    Arrays.stream(routingData.optionData()).filter(
+                    routingData.optionData().stream().filter(
                             optionData -> optionData.getName().equals(option.getName())
                     ).findFirst().orElse(null);
 

@@ -1,11 +1,10 @@
 package com.jaoafa.jaotone.Framework.Command.App;
 
-import com.jaoafa.jaotone.Framework.Command.Builder.BuildCmd;
+import com.jaoafa.jaotone.Framework.Command.Builder.PackedCmd;
 import com.jaoafa.jaotone.Framework.Command.CmdScope;
 import com.jaoafa.jaotone.Framework.Command.CmdSubstrate;
 import com.jaoafa.jaotone.Lib.Universal.LibClassFinder;
 import com.jaoafa.jaotone.Lib.jaoTone.LibValue;
-import com.jaoafa.jaotone.Main;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
@@ -15,7 +14,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.jaoafa.jaotone.Lib.Universal.LibFlow.Type.*;
+import static com.jaoafa.jaotone.Lib.Universal.LibFlow.Type.Success;
+import static com.jaoafa.jaotone.Lib.Universal.LibFlow.Type.Task;
 import static com.jaoafa.jaotone.Lib.Universal.LibFlow.print;
 
 public class AppRecorder {
@@ -57,9 +57,9 @@ public class AppRecorder {
      */
     private static ArrayList<CommandData> checkCmd(String root) throws Exception {
         ArrayList<CommandData> result = new ArrayList<>();
-        for (Class<?> cmd : new LibClassFinder().findClassesStartsWith(root,"Cmd_")) {
-            BuildCmd checkedCmd = ((CmdSubstrate) cmd.getConstructor().newInstance()).builder().finalBuild();
-            result.add(checkedCmd.commandData);
+        for (Class<?> cmd : new LibClassFinder().findClassesStartsWith(root, "Cmd_")) {
+            PackedCmd checkedCmd = ((CmdSubstrate) cmd.getConstructor().newInstance()).builder();
+            result.add(checkedCmd.commandData());
         }
         return result;
     }

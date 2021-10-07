@@ -54,6 +54,6 @@ public class BuildAction {
         if (function != null)
             ActionRouter.routeList.add(new ActionRouter.ActionRoutingData(name, null, checkPermission, function));
 
-        return new PackedAction(name,literals,checkPermission,function);
+        return new PackedAction(name, literals, checkPermission, function);
     }
 }

@@ -1,8 +1,9 @@
 package com.jaoafa.jaotone.Command.Public;
 
 import com.jaoafa.jaotone.Framework.Command.Builder.BuildCmd;
-import com.jaoafa.jaotone.Framework.Command.Builder.BuildGroup;
 import com.jaoafa.jaotone.Framework.Command.Builder.BuildSubCmd;
+import com.jaoafa.jaotone.Framework.Command.Builder.BuildSubCmdGroup;
+import com.jaoafa.jaotone.Framework.Command.Builder.PackedCmd;
 import com.jaoafa.jaotone.Framework.Command.CmdEventContainer;
 import com.jaoafa.jaotone.Framework.Command.CmdOptionContainer;
 import com.jaoafa.jaotone.Framework.Command.CmdSubstrate;
@@ -14,22 +15,30 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 public class Cmd_Alpha implements CmdSubstrate {
     @Override
-    public BuildCmd builder() {
+    public PackedCmd builder() {
         return new BuildCmd("alpha", "オレをアルファにします。")
-                .buildWithSubCmdGroup(
-                        new BuildGroup("ebi", "エビを食べます。")
+                .addSubCmdGroups(
+                        new BuildSubCmdGroup("ebi", "エビを食べます。")
                                 .addSubCmd(
-                                        new BuildSubCmd("normal", "普通にアルファします。", this::ebiNormalAlpha,
-                                                new OptionData(OptionType.STRING, "powa", "powa", false)
-                                        ),
-                                        new BuildSubCmd("super", "めっちょアルファします。", this::ebiSuperAlpha)
-                                ),
-                        new BuildGroup("phileo", "フィレオを食べます。")
+                                        new BuildSubCmd("normal", "普通にアルファします。")
+                                                .addOptions(new OptionData(OptionType.STRING, "powa", "powa", false))
+                                                .setFunction(this::ebiNormalAlpha)
+                                                .build(),
+                                        new BuildSubCmd("super", "めっちょアルファします。")
+                                                .setFunction(this::ebiSuperAlpha)
+                                                .setPermCheck(member -> false)
+                                                .build()
+                                ).build(),
+                        new BuildSubCmdGroup("phileo", "フィレオを食べます。")
                                 .addSubCmd(
-                                        new BuildSubCmd("normal", "普通にアルファします。", this::phileoNormalAlpha),
-                                        new BuildSubCmd("super", "めっちょアルファします。", this::phileoSuperAlpha)
-                                )
-                );
+                                        new BuildSubCmd("normal", "普通にアルファします。")
+                                                .setFunction(this::phileoNormalAlpha)
+                                                .build(),
+                                        new BuildSubCmd("super", "めっちょアルファします。")
+                                                .setFunction(this::phileoSuperAlpha)
+                                                .build()
+                                ).build()
+                ).build();
     }
 
     void ebiNormalAlpha(JDA jda, Guild guild, MessageChannel channel, ChannelType type, Member member, User user,

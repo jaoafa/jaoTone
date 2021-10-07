@@ -1,9 +1,5 @@
 package com.jaoafa.jaotone.Lib.Universal;
 
-import com.jaoafa.jaotone.Framework.Command.Builder.BuildCmd;
-import com.jaoafa.jaotone.Framework.Command.CmdSubstrate;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-
 import java.io.File;
 import java.net.JarURLConnection;
 import java.net.URL;
@@ -77,13 +73,13 @@ public class LibClassFinder {
         throw new IllegalArgumentException("Unsupported Class Load Protodol[" + protocol + "]");
     }
 
-    public List<Class<?>> findClassesStartsWith(String root,String prefix) throws Exception {
+    public List<Class<?>> findClassesStartsWith(String root, String prefix) throws Exception {
         List<Class<?>> result = new ArrayList<>();
         for (Class<?> foundClass : findClasses(root)) {
             if (!foundClass.getSimpleName().startsWith(prefix)
                     || foundClass.getEnclosingClass() != null
                     || foundClass.getName().contains("$")) {
-                print(Failure, "%s は %s から始まりません。スキップします...".formatted(foundClass.getSimpleName(),prefix));
+                print(Failure, "%s は %s から始まりません。スキップします...".formatted(foundClass.getSimpleName(), prefix));
                 continue;
             }
             result.add(foundClass);

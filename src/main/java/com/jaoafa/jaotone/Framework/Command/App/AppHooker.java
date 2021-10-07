@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.function.Function;
 
 public class AppHooker extends ListenerAdapter {
@@ -34,9 +35,23 @@ public class AppHooker extends ListenerAdapter {
             return;
         }
 
-        Function<Member, Boolean> checkPermission = result.routingData().checkPermission();
+        ArrayList<Function<Member, Boolean>> checkPermissions = result.routingData().checkPermission();
 
-        if (checkPermission != null && !checkPermission.apply(event.getMember())) {
+
+        boolean isAllowed = true;
+
+        for (Boolean checkPermResult :
+                new ArrayList<Boolean>() {{
+                    for (Function<Member, Boolean> checkPermission : checkPermissions)
+                        if (checkPermission != null) add(checkPermission.apply(event.getMember()));
+                }})
+            if (!checkPermResult) {
+                isAllowed = false;
+                break;
+            }
+
+
+        if (!isAllowed) {
             event.replyEmbeds(new EmbedBuilder()
                     .setTitle("## NOT PERMITTED ##")
                     .setDescription("権限がありません")

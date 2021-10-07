@@ -10,11 +10,11 @@ public class ActionHooker extends ListenerAdapter {
     public void onButtonClick(@NotNull ButtonClickEvent event) {
         JSONObject identifier = new JSONObject(event.getId());
         String name = identifier.getString("name");
-        String literal = identifier.optString("literal",null);
+        String literal = identifier.optString("literal", null);
         JSONObject data = identifier.optJSONObject("data");
 
         ActionRouter.ActionRoutingData routingData = ActionRouter.routeList.stream().filter(actionRoutingData ->
-            actionRoutingData.actionName().equals(name) && actionRoutingData.literalName().equals(literal)
+                actionRoutingData.actionName().equals(name) && actionRoutingData.literalName().equals(literal)
         ).findFirst().orElseThrow();
 
         //private対策(Guildとか)

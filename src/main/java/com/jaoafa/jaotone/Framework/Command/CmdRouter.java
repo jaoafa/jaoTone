@@ -13,8 +13,8 @@ public class CmdRouter {
                                  String groupName,
                                  String subCmdName,
                                  String scope,
-                                 Function<Member, Boolean> checkPermission,
+                                 ArrayList<Function<Member, Boolean>> checkPermission,
                                  CmdFunction function,
-                                 OptionData... optionData) {
+                                 ArrayList<OptionData> optionData) {
     }
 }

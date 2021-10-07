@@ -66,7 +66,7 @@ public class TextAnalysis {
         if (routingData == null)
             return new TextAnalysisResult(null, null, ExecutionErrorType.CommandNotFound);
 
-        if (routingData.optionData().length > 0) {
+        if (routingData.optionData().size() > 0) {
             String isOptionWithName = ".+:.+";
 
             boolean isMixedOptionForm = false;
@@ -90,7 +90,7 @@ public class TextAnalysis {
                         String optionName = optionNameAndIndex[0];
                         String optionIndex = optionNameAndIndex[1];
 
-                        OptionData optionData = Arrays.stream(routingData.optionData()).filter(
+                        OptionData optionData = routingData.optionData().stream().filter(
                                 data -> data.getName().equals(optionName)
                         ).findFirst().orElse(null);
 
@@ -103,7 +103,7 @@ public class TextAnalysis {
                         optionIndexList.add(new CmdOptionIndex(optionData, optionIndex));
                     }
 
-                    if (Arrays.stream(routingData.optionData()).filter(OptionData::isRequired).toList().size() >
+                    if (routingData.optionData().stream().filter(OptionData::isRequired).toList().size() >
                             optionIndexList.stream().filter(cmdOptionIndex -> cmdOptionIndex.optionData().isRequired()).toList().size())
                         return new TextAnalysisResult(routingData, null, ExecutionErrorType.NotEnoughOptions);
                 }

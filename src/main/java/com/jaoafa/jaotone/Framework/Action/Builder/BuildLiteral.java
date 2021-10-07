@@ -28,6 +28,6 @@ public class BuildLiteral {
     public PackedLiteral build() {
         if (function == null)
             throw new UnsupportedOperationException("Literal の Function を null にすることは出来ません！");
-        return new PackedLiteral(name,checkPermission,function);
+        return new PackedLiteral(name, checkPermission, function);
     }
 }
