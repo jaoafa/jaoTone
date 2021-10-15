@@ -4,6 +4,7 @@ import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import com.jaoafa.jaotone.Framework.Action.ActionRecorder;
 import com.jaoafa.jaotone.Framework.Command.App.AppHooker;
 import com.jaoafa.jaotone.Framework.Command.App.AppRecorder;
+import com.jaoafa.jaotone.Framework.Command.Scope.ScopeRecorder;
 import com.jaoafa.jaotone.Framework.Command.Text.TextHooker;
 import com.jaoafa.jaotone.Framework.Event.EventRecorder;
 import com.jaoafa.jaotone.Lib.jaoTone.LibValue;
@@ -44,6 +45,7 @@ public class Main {
         try {
             LibValue.jda = jdaBuilder.build().awaitReady();
             LibValue.eventWaiter = eventWaiter;
+            new ScopeRecorder();
             new AppRecorder(LibValue.jda);
             new ActionRecorder();
         } catch (Exception e) {

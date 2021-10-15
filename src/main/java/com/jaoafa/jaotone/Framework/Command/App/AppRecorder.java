@@ -1,18 +1,18 @@
 package com.jaoafa.jaotone.Framework.Command.App;
 
+import com.google.common.collect.Table;
 import com.jaoafa.jaotone.Framework.Command.Builder.PackedCmd;
-import com.jaoafa.jaotone.Framework.Command.CmdScope;
 import com.jaoafa.jaotone.Framework.Command.CmdSubstrate;
+import com.jaoafa.jaotone.Framework.Command.Scope.ScopeManager;
+import com.jaoafa.jaotone.Framework.Command.Scope.ScopeType;
 import com.jaoafa.jaotone.Lib.Universal.LibClassFinder;
 import com.jaoafa.jaotone.Lib.jaoTone.LibValue;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.jaoafa.jaotone.Lib.Universal.LibFlow.Type.Success;
 import static com.jaoafa.jaotone.Lib.Universal.LibFlow.Type.Task;
@@ -25,23 +25,29 @@ public class AppRecorder {
         List<Guild> guilds = jda.getGuilds();
 
         //GuildId / CommandDataArray
-        Map<String, ArrayList<CommandData>> commandQueue = new HashMap<>();
+        Map<String, ArrayList<CommandData>> commandQueue = new HashMap<>() {{
+            for (Guild guild : guilds) put(guild.getId(), new ArrayList<>());
+        }};
 
-        ArrayList<CommandData> publicCommands =
-                new ArrayList<>(checkCmd("%s.Command.Public".formatted(LibValue.ROOT_PACKAGE)));
-
-        for (Guild guild : guilds) commandQueue.put(guild.getId(), new ArrayList<>(publicCommands));
-
-        for (Map.Entry<String, String> entry : CmdScope.scopes.entrySet()) {
-            String scopeName = entry.getKey();
+        for (Table.Cell<@NotNull String, @NotNull ScopeType, @NotNull ArrayList<String>> entry : ScopeManager.scopes.cellSet()) {
+            String scopeName = entry.getRowKey();
             ArrayList<CommandData> commandDataList =
                     checkCmd("%s.Command.%s".formatted(LibValue.ROOT_PACKAGE, scopeName));
 
-            for (CommandData commandData : commandDataList) CmdScope.scopeList.put(commandData.getName(), scopeName);
+            for (CommandData commandData : commandDataList)
+                ScopeManager.scopeList.put(commandData.getName(), scopeName);
 
-            commandQueue.get(entry.getValue()).addAll(commandDataList);
+            switch (Objects.requireNonNull(entry.getColumnKey())) {
+                case Public -> {
+                    for (Guild guild : guilds)
+                        commandQueue.get(guild.getId()).addAll(commandDataList);
+                }
+                case Private -> {
+                    for (String guildId : Objects.requireNonNull(entry.getValue()))
+                        commandQueue.get(guildId).addAll(commandDataList);
+                }
+            }
         }
-
 
         for (Guild guild : guilds)
             guild.updateCommands().addCommands(commandQueue.get(guild.getId())).queue(
@@ -57,7 +63,11 @@ public class AppRecorder {
      */
     private static ArrayList<CommandData> checkCmd(String root) throws Exception {
         ArrayList<CommandData> result = new ArrayList<>();
-        for (Class<?> cmd : new LibClassFinder().findClassesStartsWith(root, "Cmd_")) {
+        for (Class<?> cmd : new LibClassFinder()
+                .findClassesStartsWith(root, "Cmd_")
+                .stream()
+                .filter(cmdClass -> !cmdClass.getSimpleName().equals("Scope"))
+                .toList()) {
             PackedCmd checkedCmd = ((CmdSubstrate) cmd.getConstructor().newInstance()).builder();
             result.add(checkedCmd.commandData());
         }

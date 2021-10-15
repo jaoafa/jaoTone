@@ -2,7 +2,7 @@ package com.jaoafa.jaotone.Framework.Command.Text;
 
 import com.jaoafa.jaotone.Framework.Command.CmdOptionIndex;
 import com.jaoafa.jaotone.Framework.Command.CmdRouter;
-import com.jaoafa.jaotone.Framework.Command.CmdScope;
+import com.jaoafa.jaotone.Framework.Command.Scope.ScopeManager;
 import com.jaoafa.jaotone.Lib.Discord.LibPrefix;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
@@ -131,7 +131,7 @@ public class TextAnalysis {
                 }
             }
         }
-        Map<String, String> scopeList = CmdScope.scopeList;
+        Map<String, String> scopeList = ScopeManager.scopeList;
         //Scopeが有効であり、GuildIDが一致しない場合
         if (scopeList.containsKey(routingData.cmdName()) && !scopeList.get(scopeList.get(routingData.cmdName())).equals(guildId))
             return new TextAnalysisResult(routingData, optionIndexList, ExecutionErrorType.CommandNotFound);
