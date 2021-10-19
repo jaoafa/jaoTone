@@ -1,4 +1,4 @@
-package com.jaoafa.jaotone.Lib.Discord.Music;
+package com.jaoafa.jaotone.Lib.jaoTone.Music;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;

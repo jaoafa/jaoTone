@@ -6,7 +6,8 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 import java.util.ArrayList;
 
-public record PackedCmd(String name,
+public record PackedCmd(String emoji,
+                        String name,
                         String description,
                         CmdFunction function,
                         ArrayList<OptionData> options,

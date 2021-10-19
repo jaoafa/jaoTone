@@ -3,15 +3,14 @@ package com.jaoafa.jaotone.Framework.Command.App;
 import com.jaoafa.jaotone.Framework.Command.CmdEventContainer;
 import com.jaoafa.jaotone.Framework.Command.CmdOptionContainer;
 import com.jaoafa.jaotone.Framework.Command.CmdType;
-import com.jaoafa.jaotone.Lib.Discord.LibEmbedColor;
+import com.jaoafa.jaotone.Framework.Lib.LibEmbedColor;
+import com.jaoafa.jaotone.Framework.Lib.LibHookerChecks;
+import com.jaoafa.jaotone.Framework.Lib.SupportedType;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.function.Function;
 
 public class AppHooker extends ListenerAdapter {
     @Override
@@ -35,38 +34,27 @@ public class AppHooker extends ListenerAdapter {
             return;
         }
 
-        ArrayList<Function<Member, Boolean>> checkPermissions = result.routingData().checkPermission();
+        ChannelType channelType = event.getChannelType();
+        LibHookerChecks.ChecksResult checksResult = LibHookerChecks.check(
+                channelType,
+                result.routingData().supportedType(),
+                channelType.equals(ChannelType.TEXT) ? event.getMember() : null,
+                result.routingData().checkPermission()
+        );
 
-
-        boolean isAllowed = true;
-
-        for (Boolean checkPermResult :
-                new ArrayList<Boolean>() {{
-                    for (Function<Member, Boolean> checkPermission : checkPermissions)
-                        if (checkPermission != null) add(checkPermission.apply(event.getMember()));
-                }})
-            if (!checkPermResult) {
-                isAllowed = false;
-                break;
+        switch (checksResult.resultType()) {
+            case NotAllowed, ChannelTypeNotSupported -> {
+                event.replyEmbeds(checksResult.embed()).queue();
+                return;
             }
-
-
-        if (!isAllowed) {
-            event.replyEmbeds(new EmbedBuilder()
-                    .setTitle("## NOT PERMITTED ##")
-                    .setDescription("権限がありません")
-                    .setColor(LibEmbedColor.FAILURE)
-                    .build()
-            ).queue();
-            return;
         }
 
         result.routingData().function().execute(
                 event.getJDA(),
-                event.getGuild(),
+                channelType.equals(ChannelType.TEXT) ? event.getGuild() : null,
                 event.getChannel(),
                 event.getChannelType(),
-                event.getMember(),
+                channelType.equals(ChannelType.TEXT) ? event.getMember() : null,
                 event.getUser(),
                 new CmdOptionContainer(result.optionIndices()),
                 new CmdEventContainer(event, null, CmdType.App)

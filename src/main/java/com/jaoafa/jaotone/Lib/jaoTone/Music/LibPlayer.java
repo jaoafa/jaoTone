@@ -1,7 +1,7 @@
-package com.jaoafa.jaotone.Lib.Discord.Music;
+package com.jaoafa.jaotone.Lib.jaoTone.Music;
 
-import com.jaoafa.jaotone.Lib.Discord.LibEmbedColor;
-import com.jaoafa.jaotone.Lib.Discord.LibReporter;
+import com.jaoafa.jaotone.Framework.Lib.LibEmbedColor;
+import com.jaoafa.jaotone.Framework.Lib.LibReporter;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;

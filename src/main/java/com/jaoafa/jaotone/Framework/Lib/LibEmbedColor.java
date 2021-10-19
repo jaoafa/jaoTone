@@ -1,4 +1,4 @@
-package com.jaoafa.jaotone.Lib.Discord;
+package com.jaoafa.jaotone.Framework.Lib;
 
 import java.awt.*;
 

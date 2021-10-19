@@ -1,4 +1,4 @@
-package com.jaoafa.jaotone.Lib.Discord;
+package com.jaoafa.jaotone.Framework.Lib;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 

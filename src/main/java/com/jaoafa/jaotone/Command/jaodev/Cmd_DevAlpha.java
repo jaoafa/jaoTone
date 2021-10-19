@@ -7,7 +7,7 @@ import com.jaoafa.jaotone.Framework.Command.Builder.PackedCmd;
 import com.jaoafa.jaotone.Framework.Command.CmdEventContainer;
 import com.jaoafa.jaotone.Framework.Command.CmdOptionContainer;
 import com.jaoafa.jaotone.Framework.Command.CmdSubstrate;
-import com.jaoafa.jaotone.Lib.Discord.LibReply;
+import com.jaoafa.jaotone.Framework.Lib.LibReply;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -15,8 +15,8 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 public class Cmd_DevAlpha implements CmdSubstrate {
     @Override
-    public PackedCmd builder() {
-        return new BuildCmd("devalpha", "オレをアルファにします。")
+    public PackedCmd command() {
+        return new BuildCmd("wink", "devalpha", "オレをアルファにします。")
                 .addSubCmdGroups(
                         new BuildSubCmdGroup("ebi", "エビを食べます。")
                                 .setPermCheck(member -> true)

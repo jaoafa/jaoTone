@@ -1,4 +1,4 @@
-package com.jaoafa.jaotone.Lib.Discord.Music;
+package com.jaoafa.jaotone.Lib.jaoTone.Music;
 
 public record LibTrackData(LoopFlag loopFlag, boolean sendNotify, String thumbnailUrl) {
     public enum LoopFlag {

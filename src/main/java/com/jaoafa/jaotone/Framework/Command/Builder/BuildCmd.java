@@ -2,6 +2,7 @@ package com.jaoafa.jaotone.Framework.Command.Builder;
 
 import com.jaoafa.jaotone.Framework.Command.CmdFunction;
 import com.jaoafa.jaotone.Framework.Command.CmdRouter;
+import com.jaoafa.jaotone.Framework.Lib.SupportedType;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -12,27 +13,31 @@ import java.util.Arrays;
 import java.util.function.Function;
 
 public class BuildCmd {
-    public CommandData commandData;
-
     //required
-    public String name;
-    public String description;
-
-    //optional
-    public CmdFunction function = null;
-    public ArrayList<OptionData> options = new ArrayList<>();
-    public String scope = null;
-    public Function<Member, Boolean> checkPermission = null;
-
+    private final String emoji;
+    private final String name;
+    private final String description;
+    private final ArrayList<OptionData> options = new ArrayList<>();
+    public CommandData commandData;
     //subCmds/Groups
     public ArrayList<PackedSubCmd> subCmds = new ArrayList<>();
     public ArrayList<PackedSubCmdGroup> subCmdGroups = new ArrayList<>();
-
     public ArrayList<CmdRouter.CmdRoutingData> queuedRoutingData = new ArrayList<>();
+    //optional
+    private CmdFunction function = null;
+    private SupportedType supportedType = null;
+    private String scope = null;
+    private Function<Member, Boolean> checkPermission = null;
 
-    public BuildCmd(@NotNull String name, @NotNull String description) {
+    public BuildCmd(@NotNull String emoji, @NotNull String name, @NotNull String description) {
+        this.emoji = emoji;
         this.name = name;
         this.description = description;
+    }
+
+    public BuildCmd setSupportFor(@NotNull SupportedType type) {
+        this.supportedType = type;
+        return this;
     }
 
     public BuildCmd setFunction(@NotNull CmdFunction function) {
@@ -70,11 +75,12 @@ public class BuildCmd {
 
         if (!options.isEmpty()) this.commandData.addOptions(options);
 
-        if (subCmdGroups.isEmpty() && subCmds.isEmpty()) {
+        if (subCmdGroups.isEmpty() && subCmds.isEmpty())
             this.queuedRoutingData.add(new CmdRouter.CmdRoutingData(
                     this.name,
                     null,
                     null,
+                    supportedType == null ? SupportedType.ALL : supportedType,
                     this.scope,
                     new ArrayList<>() {{
                         add(checkPermission);
@@ -82,8 +88,8 @@ public class BuildCmd {
                     this.function,
                     this.options
             ));
-        }
-        if (subCmdGroups.isEmpty() && !subCmds.isEmpty()) {
+
+        if (subCmdGroups.isEmpty() && !subCmds.isEmpty())
             for (PackedSubCmd subCmd : subCmds) {
                 this.commandData.addSubcommands(subCmd.subcommandData());
 
@@ -91,6 +97,7 @@ public class BuildCmd {
                         this.name,
                         null,
                         subCmd.name(),
+                        supportedType == null ? SupportedType.ALL : supportedType,
                         this.scope,
                         new ArrayList<>() {{
                             add(checkPermission);
@@ -100,7 +107,7 @@ public class BuildCmd {
                         subCmd.options()
                 ));
             }
-        }
+
         if (!subCmdGroups.isEmpty() && subCmds.isEmpty()) {
             for (PackedSubCmdGroup subCmdGroup : subCmdGroups) {
                 for (PackedSubCmd subCmd : subCmdGroup.packedSubCmds()) {
@@ -110,6 +117,7 @@ public class BuildCmd {
                             this.name,
                             subCmdGroup.name(),
                             subCmd.name(),
+                            supportedType == null ? SupportedType.ALL : supportedType,
                             this.scope,
                             new ArrayList<>() {{
                                 add(checkPermission);
@@ -128,6 +136,7 @@ public class BuildCmd {
         CmdRouter.routeList.addAll(this.queuedRoutingData);
 
         return new PackedCmd(
+                this.emoji,
                 this.name,
                 this.description,
                 this.function,

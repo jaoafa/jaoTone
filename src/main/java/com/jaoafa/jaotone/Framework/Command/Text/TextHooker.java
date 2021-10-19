@@ -3,17 +3,15 @@ package com.jaoafa.jaotone.Framework.Command.Text;
 import com.jaoafa.jaotone.Framework.Command.CmdEventContainer;
 import com.jaoafa.jaotone.Framework.Command.CmdOptionContainer;
 import com.jaoafa.jaotone.Framework.Command.CmdType;
-import com.jaoafa.jaotone.Lib.Discord.LibEmbedColor;
-import com.jaoafa.jaotone.Lib.Discord.LibPrefix;
+import com.jaoafa.jaotone.Framework.Lib.LibEmbedColor;
+import com.jaoafa.jaotone.Framework.Lib.LibHookerChecks;
+import com.jaoafa.jaotone.Framework.Lib.LibPrefix;
+import com.jaoafa.jaotone.Framework.Lib.SupportedType;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.ChannelType;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.function.Function;
 
 public class TextHooker extends ListenerAdapter {
     @Override
@@ -58,38 +56,27 @@ public class TextHooker extends ListenerAdapter {
             return;
         }
 
-        ArrayList<Function<Member, Boolean>> checkPermissions = result.routingData().checkPermission();
+        ChannelType channelType = event.getChannelType();
+        LibHookerChecks.ChecksResult checksResult = LibHookerChecks.check(
+                channelType,
+                result.routingData().supportedType(),
+                channelType.equals(ChannelType.TEXT) ? event.getMember() : null,
+                result.routingData().checkPermission()
+        );
 
-
-        boolean isAllowed = true;
-
-        for (Boolean checkPermResult :
-                new ArrayList<Boolean>() {{
-                    for (Function<Member, Boolean> checkPermission : checkPermissions)
-                        add(checkPermission.apply(event.getMember()));
-                }})
-            if (!checkPermResult) {
-                isAllowed = false;
-                break;
+        switch (checksResult.resultType()) {
+            case NotAllowed, ChannelTypeNotSupported -> {
+                event.getMessage().replyEmbeds(checksResult.embed()).queue();
+                return;
             }
-
-
-        if (!isAllowed) {
-            event.getMessage().replyEmbeds(new EmbedBuilder()
-                    .setTitle("## NOT PERMITTED ##")
-                    .setDescription("権限がありません")
-                    .setColor(LibEmbedColor.FAILURE)
-                    .build()
-            ).queue();
-            return;
         }
 
         result.routingData().function().execute(
                 event.getJDA(),
-                event.getGuild(),
+                channelType.equals(ChannelType.TEXT) ? event.getGuild() : null,
                 event.getChannel(),
                 event.getChannelType(),
-                event.getMember(),
+                channelType.equals(ChannelType.TEXT) ? event.getMember() : null,
                 event.getAuthor(),
                 new CmdOptionContainer(result.optionIndices()),
                 new CmdEventContainer(null, event, CmdType.Text)

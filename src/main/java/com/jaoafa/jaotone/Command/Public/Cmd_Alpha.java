@@ -1,5 +1,6 @@
 package com.jaoafa.jaotone.Command.Public;
 
+import com.jaoafa.jaotone.Framework.Action.ActionId;
 import com.jaoafa.jaotone.Framework.Command.Builder.BuildCmd;
 import com.jaoafa.jaotone.Framework.Command.Builder.BuildSubCmd;
 import com.jaoafa.jaotone.Framework.Command.Builder.BuildSubCmdGroup;
@@ -7,16 +8,18 @@ import com.jaoafa.jaotone.Framework.Command.Builder.PackedCmd;
 import com.jaoafa.jaotone.Framework.Command.CmdEventContainer;
 import com.jaoafa.jaotone.Framework.Command.CmdOptionContainer;
 import com.jaoafa.jaotone.Framework.Command.CmdSubstrate;
-import com.jaoafa.jaotone.Lib.Discord.LibReply;
+import com.jaoafa.jaotone.Framework.Lib.LibReply;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.interactions.components.Button;
 
 public class Cmd_Alpha implements CmdSubstrate {
     @Override
-    public PackedCmd builder() {
-        return new BuildCmd("alpha", "オレをアルファにします。")
+    public PackedCmd command() {
+        return new BuildCmd("wink", "alpha", "オレをアルファにします。")
                 .addSubCmdGroups(
                         new BuildSubCmdGroup("ebi", "エビを食べます。")
                                 .addSubCmd(
@@ -43,7 +46,15 @@ public class Cmd_Alpha implements CmdSubstrate {
 
     void ebiNormalAlpha(JDA jda, Guild guild, MessageChannel channel, ChannelType type, Member member, User user,
                         CmdOptionContainer options, CmdEventContainer events) {
-        LibReply.reply(events, "オ、オオwwwwwwwwオレエビノーマルアルファwwwwwwww最近めっちょふぁぼられてんねんオレwwwwwwwwエゴサとかかけるとめっちょ人気やねんwwwwァァァァァァァwwwクソアルファを見下しながら食べるエビフィレオは一段とウメェなァァァァwwwwwwww `" + options.getOrDefault("powa", "nullpowa").getAsString());
+        LibReply.replyEmbeds(
+                events,
+                new EmbedBuilder()
+                        .setTitle(options.getOrDefault("powa", "DefaultTitle").getAsString())
+                        .build()
+        ).addActionRow(
+                Button.danger(new ActionId("powa", "literalpowa", null).get(), "LiteralPowa"),
+                Button.danger(new ActionId("powa", "powaliteral", null).get(), Emoji.fromMarkdown("✨"))
+        ).done().queue();
     }
 
     void ebiSuperAlpha(JDA jda, Guild guild, MessageChannel channel, ChannelType type, Member member, User user,

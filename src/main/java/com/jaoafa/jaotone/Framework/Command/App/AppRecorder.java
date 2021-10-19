@@ -68,7 +68,7 @@ public class AppRecorder {
                 .stream()
                 .filter(cmdClass -> !cmdClass.getSimpleName().equals("Scope"))
                 .toList()) {
-            PackedCmd checkedCmd = ((CmdSubstrate) cmd.getConstructor().newInstance()).builder();
+            PackedCmd checkedCmd = ((CmdSubstrate) cmd.getConstructor().newInstance()).command();
             result.add(checkedCmd.commandData());
         }
         return result;

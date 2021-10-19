@@ -1,6 +1,7 @@
 package com.jaoafa.jaotone;
 
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
+import com.jaoafa.jaotone.Framework.Action.ActionHooker;
 import com.jaoafa.jaotone.Framework.Action.ActionRecorder;
 import com.jaoafa.jaotone.Framework.Command.App.AppHooker;
 import com.jaoafa.jaotone.Framework.Command.App.AppRecorder;
@@ -38,7 +39,7 @@ public class Main {
                         GatewayIntent.GUILD_MESSAGES,
                         GatewayIntent.GUILD_MEMBERS,
                         GatewayIntent.GUILD_VOICE_STATES
-                ).addEventListeners(eventWaiter, new AppHooker(), new TextHooker());
+                ).addEventListeners(eventWaiter, new AppHooker(), new TextHooker(), new ActionHooker());
 
         new EventRecorder(jdaBuilder);
 

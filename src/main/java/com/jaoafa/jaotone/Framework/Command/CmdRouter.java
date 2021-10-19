@@ -1,5 +1,6 @@
 package com.jaoafa.jaotone.Framework.Command;
 
+import com.jaoafa.jaotone.Framework.Lib.SupportedType;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
@@ -12,6 +13,7 @@ public class CmdRouter {
     public record CmdRoutingData(String cmdName,
                                  String groupName,
                                  String subCmdName,
+                                 SupportedType supportedType,
                                  String scope,
                                  ArrayList<Function<Member, Boolean>> checkPermission,
                                  CmdFunction function,

@@ -1,5 +1,6 @@
 package com.jaoafa.jaotone.Framework.Action;
 
+import com.jaoafa.jaotone.Framework.Lib.SupportedType;
 import net.dv8tion.jda.api.entities.Member;
 
 import java.util.ArrayList;
@@ -10,7 +11,8 @@ public class ActionRouter {
 
     public record ActionRoutingData(String actionName,
                                     String literalName,
-                                    Function<Member, Boolean> checkPermission,
+                                    SupportedType supportedType,
+                                    ArrayList<Function<Member, Boolean>> checkPermission,
                                     ActionFunction function) {
     }
 }

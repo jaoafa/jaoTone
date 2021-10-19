@@ -3,7 +3,7 @@ package com.jaoafa.jaotone.Framework.Command.Text;
 import com.jaoafa.jaotone.Framework.Command.CmdOptionIndex;
 import com.jaoafa.jaotone.Framework.Command.CmdRouter;
 import com.jaoafa.jaotone.Framework.Command.Scope.ScopeManager;
-import com.jaoafa.jaotone.Lib.Discord.LibPrefix;
+import com.jaoafa.jaotone.Framework.Lib.LibPrefix;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 import java.util.*;

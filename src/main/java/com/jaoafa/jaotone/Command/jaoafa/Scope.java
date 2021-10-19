@@ -9,7 +9,7 @@ public class Scope implements ScopeSubstrate {
     @Override
     public PackedScope scope() {
         return new ScopeBuilder(this.getClass().getPackageName(), ScopeType.Private)
-                .addGuilds("597378876556967936","840578119467401257")
+                .addGuilds("597378876556967936", "840578119467401257")
                 .build();
     }
 }
