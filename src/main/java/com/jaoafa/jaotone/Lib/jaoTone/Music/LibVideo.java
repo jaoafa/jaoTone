@@ -15,8 +15,8 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.function.Function;
 
-public class LibYouTube {
-    public static SearchResult search(String term, int limit) {
+public class LibVideo {
+    public static SearchResult searchYouTube(String term, int limit) {
         String url = "https://www.googleapis.com/youtube/v3/search?type=video&part=snippet&q=%s&maxResults=%s&key=%s"
                 .formatted(term, limit, LibValue.get("YouTube"));
 
@@ -32,11 +32,11 @@ public class LibYouTube {
             return new SearchResult(null, ErrorType.NotFound);
         }
 
-        ArrayList<VideoInfo> videoInfos = new ArrayList<>() {{
+        ArrayList<LibVideoInfo> videoInfos = new ArrayList<>() {{
             for (Object item : items) {
                 DocumentContext context = JsonPath.parse(item);
                 Function<String, String> getByPath = context::read;
-                add(new VideoInfo(
+                add(new LibVideoInfo(
                         getByPath.apply("$.snippet.channelTitle"),
                         getByPath.apply("$.snippet.channelId"),
                         getByPath.apply("$.snippet.title"),
@@ -52,19 +52,8 @@ public class LibYouTube {
         return new SearchResult(videoInfos, ErrorType.NoError);
     }
 
-    public record SearchResult(ArrayList<VideoInfo> videoInfos,
+    public record SearchResult(ArrayList<LibVideoInfo> videoInfos,
                                ErrorType errorType) {
-    }
-
-    public record VideoInfo(String channelTitle,
-                            String channelId,
-                            String title,
-                            String videoId,
-                            String description,
-                            String imgDefault,
-                            String imgMedium,
-                            String imgHigh,
-                            String publishTime) {
     }
 
     public enum ErrorType {

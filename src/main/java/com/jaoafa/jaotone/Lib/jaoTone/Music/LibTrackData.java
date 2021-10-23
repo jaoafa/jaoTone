@@ -1,6 +1,7 @@
 package com.jaoafa.jaotone.Lib.jaoTone.Music;
 
-public record LibTrackData(LoopFlag loopFlag, boolean sendNotify, String thumbnailUrl) {
+public record LibTrackData(LoopFlag loopFlag, PlatformFlag platformFlag,
+                           boolean sendNotify, LibVideoInfo videoInfo) {
     public enum LoopFlag {
         QueueLoopStart, QueueLoopEnd, SingleLoop, NoLoop
     }

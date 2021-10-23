@@ -52,15 +52,19 @@ public class LibPlayer {
             public void trackLoaded(AudioTrack track) {
                 track.setUserData(trackRecord);
                 play(musicManager, track);
+                LibVideoInfo videoInfo = trackRecord.videoInfo();
                 if (trackRecord.sendNotify())
                     channel.sendMessageEmbeds(new EmbedBuilder()
-                            //todo 対応プラットフォーム毎に表示変更(Description)
-                            .setDescription("[YouTubeへ](https://www.youtube.com/watch?v=%s)".formatted(track.getInfo().identifier))
-                            .setTitle(":inbox_tray: キューに追加されました！")
-                            .addField(":musical_note: タイトル", track.getInfo().title, false)
-                            .addField(":bust_in_silhouette: 作者", track.getInfo().author, true)
-                            .addField(":timer: 長さ", track.getDuration() / 60000 + "分", true)
-                            .setThumbnail(trackRecord.thumbnailUrl())
+                            .setTitle(":inbox_tray: トラックが追加されました！")
+                            .setDescription(switch (trackRecord.platformFlag()) {
+                                case YouTube, HTTP -> "[ソース:%s を開く](%s)".formatted(trackRecord.loopFlag().name(), trackUrl);
+                                case Local -> "ソース:Local `%s`".formatted(trackUrl);
+                            })
+                            .addField(":pencil: %s".formatted(videoInfo.videoName()), """
+                                    **:bust_in_silhouette: 作者:** %s
+                                    **:timer: 長さ:** %s 分
+                                    """.formatted(videoInfo.authorName(), track.getDuration() / 60000), false)
+                            .setThumbnail(videoInfo.imgDefault())
                             .setColor(LibEmbedColor.SUCCESS)
                             .build()
                     ).queue();
@@ -68,8 +72,30 @@ public class LibPlayer {
 
             @Override
             public void playlistLoaded(AudioPlaylist playlist) {
-                for (AudioTrack track : playlist.getTracks()) {
-                    //todo trackLoadedと同じような処理だけど追加通知は１つのEmbedにまとめる
+                if (trackRecord.sendNotify()) {
+                    EmbedBuilder embedBuilder = new EmbedBuilder().setTitle(":inbox_tray: プレイリストが追加されました！");
+                    int totalTime = 0;
+                    for (AudioTrack track : playlist.getTracks()) {
+                        LibVideoInfo videoInfo = trackRecord.videoInfo();
+                        embedBuilder.addField(
+                                ":pencil: [%s](%s)".formatted(
+                                        videoInfo.videoName(),
+                                        switch (trackRecord.platformFlag()) {
+                                            case YouTube, HTTP -> trackUrl;
+                                            case Local -> "";
+                                        }
+                                ),
+                                ":bust_in_silhouette: %s / :timer: %s 分 "
+                                        .formatted(
+                                                videoInfo.authorName(),
+                                                track.getDuration() / 60000
+                                        ),
+                                false
+                        );
+                        totalTime = totalTime + Math.toIntExact(track.getDuration() / 60000);
+                    }
+                    embedBuilder.setDescription("**:timer: 長さ:** %s 分".formatted(totalTime));
+                    channel.sendMessageEmbeds(embedBuilder.build()).queue();
                 }
             }
 
@@ -91,7 +117,6 @@ public class LibPlayer {
                         .setColor(LibEmbedColor.FAILURE)
                         .build()
                 ).queue();
-                LibReporter.report(e);
             }
         });
     }
