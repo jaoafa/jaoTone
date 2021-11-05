@@ -1,7 +1,6 @@
 package com.jaoafa.jaotone.Lib.jaoTone.Music;
 
 import com.jaoafa.jaotone.Framework.Lib.LibEmbedColor;
-import com.jaoafa.jaotone.Framework.Lib.LibReporter;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
@@ -57,7 +56,7 @@ public class LibPlayer {
                     channel.sendMessageEmbeds(new EmbedBuilder()
                             .setTitle(":inbox_tray: トラックが追加されました！")
                             .setDescription(switch (trackRecord.platformFlag()) {
-                                case YouTube, HTTP -> "[ソース:%s を開く](%s)".formatted(trackRecord.loopFlag().name(), trackUrl);
+                                case YouTube, HTTP -> "[ソース:%s を開く](%s)".formatted(trackRecord.platformFlag().name(), trackUrl);
                                 case Local -> "ソース:Local `%s`".formatted(trackUrl);
                             })
                             .addField(":pencil: %s".formatted(videoInfo.videoName()), """
@@ -101,22 +100,24 @@ public class LibPlayer {
 
             @Override
             public void noMatches() {
-                channel.sendMessageEmbeds(new EmbedBuilder()
-                        .setTitle(":woman_bowing: Not Found")
-                        .setDescription("一致する項目が見つかりませんでした！")
-                        .setColor(LibEmbedColor.FAILURE)
-                        .build()
-                ).queue();
+                if (trackRecord.sendNotify())
+                    channel.sendMessageEmbeds(new EmbedBuilder()
+                            .setTitle(":woman_bowing: Not Found")
+                            .setDescription("一致する項目が見つかりませんでした！")
+                            .setColor(LibEmbedColor.FAILURE)
+                            .build()
+                    ).queue();
             }
 
             @Override
             public void loadFailed(FriendlyException e) {
-                channel.sendMessageEmbeds(new EmbedBuilder()
-                        .setTitle(":woman_bowing: Error")
-                        .setDescription("ロードに失敗しました！")
-                        .setColor(LibEmbedColor.FAILURE)
-                        .build()
-                ).queue();
+                if (trackRecord.sendNotify())
+                    channel.sendMessageEmbeds(new EmbedBuilder()
+                            .setTitle(":woman_bowing: Error")
+                            .setDescription("ロードに失敗しました！")
+                            .setColor(LibEmbedColor.FAILURE)
+                            .build()
+                    ).queue();
             }
         });
     }
@@ -124,5 +125,4 @@ public class LibPlayer {
     private void play(LibGuildMusic musicManager, AudioTrack track) {
         musicManager.scheduler.queue(track);
     }
-
 }

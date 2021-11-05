@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 public class AppAnalysis {
@@ -17,9 +18,9 @@ public class AppAnalysis {
 
         CmdRouter.CmdRoutingData routingData = CmdRouter.routeList.stream().filter(
                 index ->
-                        index.cmdName().equals(cmdName) &&
-                                index.groupName().equals(subCmdGroupName) &&
-                                index.subCmdName().equals(subCmdName)
+                        Objects.equals(index.cmdName(), cmdName) &&
+                                Objects.equals(index.groupName(), subCmdGroupName) &&
+                                Objects.equals(index.subCmdName(), subCmdName)
         ).findFirst().orElse(null);
 
 

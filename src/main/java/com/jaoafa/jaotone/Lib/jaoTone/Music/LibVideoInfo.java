@@ -1,9 +1,9 @@
 package com.jaoafa.jaotone.Lib.jaoTone.Music;
 
 public record LibVideoInfo(String authorName,
-                           String authorId,
+                           String authorURL,
                            String videoName,
-                           String videoId,
+                           String videoURL,
                            String description,
                            String imgDefault,
                            String imgMedium,
