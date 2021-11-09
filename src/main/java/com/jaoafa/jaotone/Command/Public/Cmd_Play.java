@@ -31,9 +31,14 @@ public class Cmd_Play implements CmdSubstrate {
                 .setFunction(this::play)
                 .addOptions(new OptionData(OptionType.STRING, "url", "URLを入力", true),
                         new OptionData(OptionType.STRING, "platform", "プラットフォームを指定します", false)
-                                .addChoice("YouTube", "youtube")
-                                .addChoice("HTTP", "http")
-                                .addChoice("Local", "local"))
+                                .addChoice("YouTube", "YouTube")
+                                .addChoice("HTTP", "HTTP")
+                                .addChoice("Local", "Local"),
+                        new OptionData(OptionType.STRING, "loop", "ループの種類を指定します", false)
+                                .addChoice("QueueLoop", "QueueLoop")
+                                .addChoice("SingleLoop", "QueueLoop")
+                                .addChoice("NoLoop", "NoLoop")
+                )
                 .build();
     }
 
@@ -67,10 +72,10 @@ public class Cmd_Play implements CmdSubstrate {
         } else if (!selfVoiceState.inVoiceChannel()) {
             List<VoiceChannel> voiceChannelList = guild.getVoiceChannels();
             VoiceChannel maxVoiceChannel = voiceChannelList.get(0);
-            for (VoiceChannel voiceChannel : voiceChannelList) {
+
+            for (VoiceChannel voiceChannel : voiceChannelList)
                 if (maxVoiceChannel.getMembers().size() < voiceChannel.getMembers().size())
                     maxVoiceChannel = voiceChannel;
-            }
 
             LibControl.JoinResult result = LibControl.join(maxVoiceChannel);
             if (!result.isSuccessful()) {
@@ -86,31 +91,34 @@ public class Cmd_Play implements CmdSubstrate {
         }
 
         String urlUserInput = options.get("url").getAsString();
+        String platformUserInput = options.getOrDefault("platform", "YouTube").getAsString();
+        LibTrackData.PlatformFlag platformFlag = LibTrackData.PlatformFlag.valueOf(platformUserInput);
+        LibTrackData.LoopFlag loopFlag = LibTrackData.LoopFlag.valueOf(options.getOrDefault("loop", "NoLoop").getAsString());
         LibVideoInfo videoInfo = null;
 
-        String url = switch (options.getOrDefault("platform", "youtube").getAsString()) {
-            case "youtube" -> {
+        String url = switch (platformFlag) {
+            case YouTube -> {
                 videoInfo = LibVideo.searchYouTube(urlUserInput, 1).videoInfos().get(0);
                 yield videoInfo.videoURL();
             }
-            case "http" -> {
+            case HTTP -> {
                 videoInfo = LibVideo.searchHttp(urlUserInput).videoInfos().get(0);
                 yield urlUserInput;
             }
-            case "local" -> {
+            case Local -> {
                 videoInfo = LibVideo.searchLocal(urlUserInput).videoInfos().get(0);
                 yield urlUserInput;
             }
-            default -> {
-                LibReply.replyEmbeds(events, new EmbedBuilder()
-                        .setTitle(":woman_bowing: そのようなプラットフォームには対応していません！")
-                        .setDescription("`YouTube`,`HTTP`,`Local` にのみ対応しています。")
-                        .setColor(LibEmbedColor.FAILURE)
-                        .build()
-                ).done().queue();
-
-                yield null;
-            }
+//            default -> {
+//                LibReply.replyEmbeds(events, new EmbedBuilder()
+//                        .setTitle(":woman_bowing: そのようなプラットフォームには対応していません！")
+//                        .setDescription("`YouTube`,`HTTP`,`Local` にのみ対応しています。")
+//                        .setColor(LibEmbedColor.FAILURE)
+//                        .build()
+//                ).done().queue();
+//
+//                yield null;
+//            }
         };
 
         if (url == null) return;
@@ -119,8 +127,8 @@ public class Cmd_Play implements CmdSubstrate {
                 (TextChannel) channel,
                 url,
                 new LibTrackData(
-                        LibTrackData.LoopFlag.NoLoop,
-                        LibTrackData.PlatformFlag.HTTP,
+                        loopFlag,
+                        platformFlag,
                         true,
                         videoInfo
                 )

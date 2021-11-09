@@ -33,7 +33,7 @@ public class LibControl {
             );
 
         EmbedBuilder successEmbed = new EmbedBuilder()
-                .setTitle(":inbox_tray: <#%s> に接続しました".formatted(connectTo.getId()))
+                .setDescription("**:inbox_tray: <#%s> に接続しました**".formatted(connectTo.getId()))
                 .setColor(LibEmbedColor.SUCCESS);
 
         VoiceChannel connectedChannel = voiceState.getChannel();
