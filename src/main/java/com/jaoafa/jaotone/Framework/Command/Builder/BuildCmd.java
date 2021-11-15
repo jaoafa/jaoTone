@@ -17,8 +17,7 @@ public class BuildCmd {
     private final String emoji;
     private final String name;
     private final String description;
-    private final ArrayList<OptionData> options = new ArrayList<>();
-    public CommandData commandData;
+    public ArrayList<CommandData> commandData = new ArrayList<>();
     //subCmds/Groups
     public ArrayList<PackedSubCmd> subCmds = new ArrayList<>();
     public ArrayList<PackedSubCmdGroup> subCmdGroups = new ArrayList<>();
@@ -28,11 +27,19 @@ public class BuildCmd {
     private SupportedType supportedType = null;
     private String scope = null;
     private Function<Member, Boolean> checkPermission = null;
+    private final ArrayList<OptionData> options = new ArrayList<>();
+    private final ArrayList<String> names = new ArrayList<>();
 
     public BuildCmd(@NotNull String emoji, @NotNull String name, @NotNull String description) {
         this.emoji = emoji;
         this.name = name;
+        this.names.add(name);
         this.description = description;
+    }
+
+    public BuildCmd addAlias(@NotNull String... aliases) {
+        this.names.addAll(Arrays.asList(aliases));
+        return this;
     }
 
     public BuildCmd setSupportFor(@NotNull SupportedType type) {
@@ -71,65 +78,78 @@ public class BuildCmd {
     }
 
     public PackedCmd build() {
-        this.commandData = new CommandData(this.name, this.description);
-
-        if (!options.isEmpty()) this.commandData.addOptions(options);
-
-        if (subCmdGroups.isEmpty() && subCmds.isEmpty())
-            this.queuedRoutingData.add(new CmdRouter.CmdRoutingData(
-                    this.name,
-                    null,
-                    null,
-                    supportedType == null ? SupportedType.ALL : supportedType,
-                    this.scope,
-                    new ArrayList<>() {{
-                        add(checkPermission);
-                    }},
-                    this.function,
-                    this.options
+        for (String name : names)
+            this.commandData.add(new CommandData(name,
+                    name.equals(this.name) ?
+                            this.description :
+                            this.description + " (%s)".formatted(this.name)
             ));
 
-        if (subCmdGroups.isEmpty() && !subCmds.isEmpty())
-            for (PackedSubCmd subCmd : subCmds) {
-                this.commandData.addSubcommands(subCmd.subcommandData());
+        if (!options.isEmpty())
+            this.commandData.forEach(cmdData -> cmdData.addOptions(options));
 
+
+        if (subCmdGroups.isEmpty() && subCmds.isEmpty())
+            for (String name : names) {
                 this.queuedRoutingData.add(new CmdRouter.CmdRoutingData(
-                        this.name,
+                        name,
                         null,
-                        subCmd.name(),
+                        null,
                         supportedType == null ? SupportedType.ALL : supportedType,
                         this.scope,
                         new ArrayList<>() {{
                             add(checkPermission);
-                            add(subCmd.checkPermission());
                         }},
-                        subCmd.function(),
-                        subCmd.options()
+                        this.function,
+                        this.options
                 ));
             }
 
-        if (!subCmdGroups.isEmpty() && subCmds.isEmpty()) {
-            for (PackedSubCmdGroup subCmdGroup : subCmdGroups) {
-                for (PackedSubCmd subCmd : subCmdGroup.packedSubCmds()) {
-                    subCmdGroup.subcommandGroupData().addSubcommands(subCmd.subcommandData());
+
+        if (subCmdGroups.isEmpty() && !subCmds.isEmpty())
+            for (String name : names)
+                for (PackedSubCmd subCmd : subCmds) {
+                    this.commandData.forEach(cmdData -> cmdData.addSubcommands(subCmd.subcommandData()));
 
                     this.queuedRoutingData.add(new CmdRouter.CmdRoutingData(
-                            this.name,
-                            subCmdGroup.name(),
+                            name,
+                            null,
                             subCmd.name(),
                             supportedType == null ? SupportedType.ALL : supportedType,
                             this.scope,
                             new ArrayList<>() {{
                                 add(checkPermission);
-                                add(subCmdGroup.checkPermission());
                                 add(subCmd.checkPermission());
                             }},
                             subCmd.function(),
                             subCmd.options()
                     ));
                 }
-                this.commandData.addSubcommandGroups(subCmdGroup.subcommandGroupData());
-            }
+
+
+        if (!subCmdGroups.isEmpty() && subCmds.isEmpty()) {
+            for (String name : names)
+                for (PackedSubCmdGroup subCmdGroup : subCmdGroups) {
+                    for (PackedSubCmd subCmd : subCmdGroup.packedSubCmds()) {
+                        subCmdGroup.subcommandGroupData().addSubcommands(subCmd.subcommandData());
+
+                        this.queuedRoutingData.add(new CmdRouter.CmdRoutingData(
+                                name,
+                                subCmdGroup.name(),
+                                subCmd.name(),
+                                supportedType == null ? SupportedType.ALL : supportedType,
+                                this.scope,
+                                new ArrayList<>() {{
+                                    add(checkPermission);
+                                    add(subCmdGroup.checkPermission());
+                                    add(subCmd.checkPermission());
+                                }},
+                                subCmd.function(),
+                                subCmd.options()
+                        ));
+                    }
+                    this.commandData.forEach(cmdData -> cmdData.addSubcommandGroups(subCmdGroup.subcommandGroupData()));
+                }
         }
 
 
@@ -138,9 +158,11 @@ public class BuildCmd {
         return new PackedCmd(
                 this.emoji,
                 this.name,
+                this.names,
                 this.description,
                 this.function,
                 this.options,
+                this.names,
                 this.scope,
                 this.subCmds,
                 this.subCmdGroups,

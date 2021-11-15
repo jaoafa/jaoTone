@@ -56,4 +56,7 @@ public class LibAutoControl {
                 .setTitle(":grey_question: 既に接続しています")
                 .setColor(LibEmbedColor.SUCCESS));
     }
+    public static LibControl.ControlResult leave(Guild guild) {
+        return LibControl.leave(guild);
+    }
 }

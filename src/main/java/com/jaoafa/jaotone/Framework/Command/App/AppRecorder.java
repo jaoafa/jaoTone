@@ -29,30 +29,32 @@ public class AppRecorder {
             for (Guild guild : guilds) put(guild.getId(), new ArrayList<>());
         }};
 
-        for (Table.Cell<@NotNull String, @NotNull ScopeType, @NotNull ArrayList<String>> entry : ScopeManager.scopes.cellSet()) {
-            String scopeName = entry.getRowKey();
+        for (Map.Entry<String, ScopeManager.ScopeIndex> scopeIndexEntry : ScopeManager.scopes.entrySet()) {
+            String scopeName = scopeIndexEntry.getKey();
             ArrayList<CommandData> commandDataList =
                     checkCmd("%s.Command.%s".formatted(LibValue.ROOT_PACKAGE, scopeName));
 
             for (CommandData commandData : commandDataList)
                 ScopeManager.scopeList.put(commandData.getName(), scopeName);
 
-            switch (Objects.requireNonNull(entry.getColumnKey())) {
+            switch (scopeIndexEntry.getValue().type()) {
                 case Public -> {
                     for (Guild guild : guilds)
                         commandQueue.get(guild.getId()).addAll(commandDataList);
                 }
                 case Private -> {
-                    for (String guildId : Objects.requireNonNull(entry.getValue()))
+                    for (String guildId : scopeIndexEntry.getValue().guilds())
                         commandQueue.get(guildId).addAll(commandDataList);
                 }
             }
         }
 
-        for (Guild guild : guilds)
+        for (Guild guild : guilds) {
             guild.updateCommands().addCommands(commandQueue.get(guild.getId())).queue(
                     recordedCmd -> print(Success, "%s に %s コマンドを登録しました".formatted(guild.getName(), recordedCmd.size()))
             );
+        }
+
     }
 
     /**
@@ -69,7 +71,7 @@ public class AppRecorder {
                 .filter(cmdClass -> !cmdClass.getSimpleName().equals("Scope"))
                 .toList()) {
             PackedCmd checkedCmd = ((CmdSubstrate) cmd.getConstructor().newInstance()).command();
-            result.add(checkedCmd.commandData());
+            result.addAll(checkedCmd.commandData());
         }
         return result;
     }

@@ -22,6 +22,7 @@ public class Cmd_Play implements CmdSubstrate {
     @Override
     public PackedCmd command() {
         return new BuildCmd("arrow_forward", "play", "音楽を再生します")
+                .addAlias("p")
                 .setSupportFor(SupportedType.TEXT)
                 .setFunction(this::play)
                 .addOptions(new OptionData(OptionType.STRING, "url", "URLを入力", true),
@@ -41,7 +42,7 @@ public class Cmd_Play implements CmdSubstrate {
         LibControl.ControlResult result = LibAutoControl.join(member);
         if (!result.resultType().equals(LibControl.ControlResultType.AlreadyJoined))
             LibReply.replyEmbeds(events, result.embed().build()).done().queue();
-        
+
         String urlUserInput = options.get("url").getAsString();
         String platformUserInput = options.getOrDefault("platform", "YouTube").getAsString();
         LibTrackData.PlatformFlag platformFlag = LibTrackData.PlatformFlag.valueOf(platformUserInput);
@@ -61,16 +62,6 @@ public class Cmd_Play implements CmdSubstrate {
                 videoInfo = LibVideo.searchLocal(urlUserInput).videoInfos().get(0);
                 yield urlUserInput;
             }
-            //default -> {
-            //    LibReply.replyEmbeds(events, new EmbedBuilder()
-            //            .setTitle(":woman_bowing: そのようなプラットフォームには対応していません！")
-            //            .setDescription("`YouTube`,`HTTP`,`Local` にのみ対応しています。")
-            //            .setColor(LibEmbedColor.FAILURE)
-            //            .build()
-            //    ).done().queue();
-            //
-            //    yield null;
-            //}
         };
 
         if (url == null) return;

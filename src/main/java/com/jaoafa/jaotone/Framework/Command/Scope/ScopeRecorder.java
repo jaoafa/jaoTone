@@ -12,7 +12,7 @@ public class ScopeRecorder {
                                     .toList()) {
             PackedScope scope = ((ScopeSubstrate) scopeClass.getConstructor().newInstance()).scope();
 
-            ScopeManager.scopes.put(scope.scope(), scope.scopeType(), scope.guilds());
+            ScopeManager.scopes.put(scope.scope(), new ScopeManager.ScopeIndex(scope.scopeType(), scope.guilds()));
         }
     }
 }

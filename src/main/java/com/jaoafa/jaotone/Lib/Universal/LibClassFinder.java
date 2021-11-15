@@ -76,6 +76,7 @@ public class LibClassFinder {
     public List<Class<?>> findClassesStartsWith(String root, String prefix) throws Exception {
         List<Class<?>> result = new ArrayList<>();
         for (Class<?> foundClass : findClasses(root)) {
+            if (foundClass.getSimpleName().equals("Scope")) continue;
             if (!foundClass.getSimpleName().startsWith(prefix)
                     || foundClass.getEnclosingClass() != null
                     || foundClass.getName().contains("$")) {

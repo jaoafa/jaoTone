@@ -11,6 +11,8 @@ import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.managers.AudioManager;
 
 public class LibControl {
+    //あとでまとめる
+    //Enum JOIN/LEAVE とかで一つのメソッドに (AutoControlも)
     public static ControlResult join(VoiceChannel connectTo) {
         if (connectTo == null)
             return new ControlResult(
@@ -62,15 +64,14 @@ public class LibControl {
             );
     }
 
-    public static ControlResult leave(VoiceChannel disconnectFrom) {
-        if (disconnectFrom == null)
+    public static ControlResult leave(Guild leaveFrom) {
+        if (leaveFrom == null)
             return new ControlResult(
                     ControlResultType.Failure,
                     LibEmbedPreset.getInfoFailed(null, "GET VOICECHANNEL FAILED")
             );
 
-        Guild guild = disconnectFrom.getGuild();
-        Member self = guild.getMember(LibValue.jda.getSelfUser());
+        Member self = leaveFrom.getMember(LibValue.jda.getSelfUser());
 
         if (self == null)
             return new ControlResult(
@@ -85,16 +86,16 @@ public class LibControl {
                     LibEmbedPreset.getInfoFailed(null, "GET VOICESTATE FAILED")
             );
 
-        if (!selfVoiceState.inVoiceChannel())
+        if (!selfVoiceState.inVoiceChannel() || selfVoiceState.getChannel() == null)
             return new ControlResult(ControlResultType.AlreadyLeft, new EmbedBuilder()
-                    .setDescription("**:grey_question: 既に <#%s> から切断しています**".formatted(disconnectFrom.getId()))
+                    .setDescription("**:grey_question: 既に切断しています**")
                     .setColor(LibEmbedColor.SUCCESS));
 
-        LibPlayer.getINSTANCE().getGuildMusicManager(guild).player.destroy();
-        guild.getAudioManager().closeAudioConnection();
+        LibPlayer.getINSTANCE().getGuildMusicManager(leaveFrom).player.destroy();
+        leaveFrom.getAudioManager().closeAudioConnection();
 
         return new ControlResult(ControlResultType.Left, new EmbedBuilder()
-                .setDescription("**:outbox_tray: <#%s> から切断しました**".formatted(disconnectFrom.getId()))
+                .setDescription("**:outbox_tray: <#%s> から切断しました**".formatted(selfVoiceState.getChannel().getId()))
                 .setColor(LibEmbedColor.SUCCESS));
     }
 

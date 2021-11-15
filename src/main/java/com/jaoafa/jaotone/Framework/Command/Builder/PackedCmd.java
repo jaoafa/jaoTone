@@ -8,11 +8,13 @@ import java.util.ArrayList;
 
 public record PackedCmd(String emoji,
                         String name,
+                        ArrayList<String> names,
                         String description,
                         CmdFunction function,
                         ArrayList<OptionData> options,
+                        ArrayList<String> aliases,
                         String scope,
                         ArrayList<PackedSubCmd> subCmds,
                         ArrayList<PackedSubCmdGroup> subCmdGroups,
-                        CommandData commandData) {
+                        ArrayList<CommandData> commandData) {
 }

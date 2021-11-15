@@ -3,10 +3,14 @@ package com.jaoafa.jaotone.Framework.Command.Text;
 import com.jaoafa.jaotone.Framework.Command.CmdOptionIndex;
 import com.jaoafa.jaotone.Framework.Command.CmdRouter;
 import com.jaoafa.jaotone.Framework.Command.Scope.ScopeManager;
+import com.jaoafa.jaotone.Framework.Command.Scope.ScopeType;
 import com.jaoafa.jaotone.Framework.Lib.LibPrefix;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 public class TextAnalysis {
     static String isChannel = "<#[0-9]+>"; //Channel
@@ -131,9 +135,9 @@ public class TextAnalysis {
                 }
             }
         }
-        Map<String, String> scopeList = ScopeManager.scopeList;
         //Scopeが有効であり、GuildIDが一致しない場合
-        if (scopeList.containsKey(routingData.cmdName()) && !scopeList.get(scopeList.get(routingData.cmdName())).equals(guildId))
+        ScopeManager.ScopeIndex scopeIndex = ScopeManager.scopes.get(ScopeManager.scopeList.get(routingData.cmdName()));
+        if (!scopeIndex.type().equals(ScopeType.Public) && !scopeIndex.guilds().contains(guildId))
             return new TextAnalysisResult(routingData, optionIndexList, ExecutionErrorType.CommandNotFound);
 
         return new TextAnalysisResult(routingData, optionIndexList, ExecutionErrorType.NoError);
