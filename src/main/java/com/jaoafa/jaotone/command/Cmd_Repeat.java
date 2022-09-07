@@ -9,7 +9,15 @@ import com.jaoafa.jaotone.player.TrackScheduler;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
+/**
+ * コマンド: repeat
+ * <p>
+ * トラックのリピート設定を行います。
+ */
 public class Cmd_Repeat extends Command {
+    /**
+     * {@link Cmd_Repeat} クラスの新しいインスタンスを初期化します。
+     */
     @SuppressWarnings("unused")
     public Cmd_Repeat() {
         this.name = "repeat";

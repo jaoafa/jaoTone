@@ -13,16 +13,29 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+/**
+ * トラックの再生を管理（スケジューリング）します。
+ */
 public class TrackScheduler extends AudioEventAdapter {
     private final AudioPlayer player;
     private final BlockingQueue<AudioTrack> queue;
     private RepeatMode repeatMode = RepeatMode.DISABLE;
 
+    /**
+     * {@link TrackScheduler} クラスの新しいインスタンスを初期化します。
+     *
+     * @param player {@link AudioPlayer}
+     */
     public TrackScheduler(AudioPlayer player) {
         this.player = player;
         this.queue = new LinkedBlockingQueue<>();
     }
 
+    /**
+     * トラックをキューに追加します。
+     *
+     * @param track {@link AudioTrack}
+     */
     public void queue(AudioTrack track) {
         if (player.startTrack(track, true)) {
             return;
@@ -32,6 +45,11 @@ public class TrackScheduler extends AudioEventAdapter {
         }
     }
 
+    /**
+     * 次のトラックを再生します。
+     *
+     * @return 再生できたかどうか
+     */
     public boolean nextTrack() {
         if (repeatMode == RepeatMode.SINGLE) {
             player.startTrack(player.getPlayingTrack().makeClone(), false);
@@ -48,6 +66,13 @@ public class TrackScheduler extends AudioEventAdapter {
         return result;
     }
 
+    /**
+     * トラックを終了したときに呼び出されます。
+     *
+     * @param player    {@link AudioPlayer}
+     * @param track     {@link AudioTrack}
+     * @param endReason {@link AudioTrackEndReason}
+     */
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
         if (!endReason.mayStartNext) {
@@ -56,6 +81,11 @@ public class TrackScheduler extends AudioEventAdapter {
         nextTrack();
     }
 
+    /**
+     * キューをシャッフルします。
+     *
+     * @see com.jaoafa.jaotone.command.Cmd_Shuffle
+     */
     public void shuffle() {
         List<AudioTrack> list = new ArrayList<>(queue);
         Collections.shuffle(list);
@@ -63,21 +93,53 @@ public class TrackScheduler extends AudioEventAdapter {
         queue.addAll(list);
     }
 
+    /**
+     * キューを取得します。
+     *
+     * @return キュー
+     * @see com.jaoafa.jaotone.command.Cmd_Queue
+     */
     public BlockingQueue<AudioTrack> getQueue() {
         return queue;
     }
 
+    /**
+     * リピートモードを設定します。
+     *
+     * @param mode リピートモード
+     * @see com.jaoafa.jaotone.command.Cmd_Repeat
+     */
     public void setRepeatMode(RepeatMode mode) {
         this.repeatMode = mode;
     }
 
+    /**
+     * リピートモードを取得します。
+     *
+     * @return 現在のリピートモード
+     * @see com.jaoafa.jaotone.command.Cmd_Repeat
+     */
     public RepeatMode getRepeatMode() {
         return repeatMode;
     }
 
+    /**
+     * リピートモード
+     *
+     * @see com.jaoafa.jaotone.command.Cmd_Repeat
+     */
     public enum RepeatMode {
+        /**
+         * リピート無効
+         */
         DISABLE("無効"),
+        /**
+         * 単曲リピート
+         */
         SINGLE("単一トラック"),
+        /**
+         * 全曲リピート
+         */
         ALL("すべてのトラック");
 
         private final String name;
@@ -86,6 +148,11 @@ public class TrackScheduler extends AudioEventAdapter {
             this.name = name;
         }
 
+        /**
+         * リピートモードの名前を取得します。
+         *
+         * @return リピートモードの名前
+         */
         public String getName() {
             return name;
         }

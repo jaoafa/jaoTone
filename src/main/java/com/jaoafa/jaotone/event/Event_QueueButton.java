@@ -7,6 +7,13 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * イベント: QueueButton
+ * <p>
+ * {@link com.jaoafa.jaotone.command.Cmd_Queue} コマンドで表示された再生キューのページネーションボタンを押したときに発生します。
+ *
+ * @see com.jaoafa.jaotone.command.Cmd_Queue
+ */
 public class Event_QueueButton extends ListenerAdapter {
     @Override
     public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {

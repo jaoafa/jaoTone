@@ -5,7 +5,15 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jaoafa.jaotone.lib.ToneLib;
 import com.jaoafa.jaotone.player.PlayerManager;
 
+/**
+ * コマンド: play
+ * <p>
+ * 指定された URL の音楽を再生します。または指定されたキーワードで検索し、最初にヒットした曲を再生します。
+ */
 public class Cmd_Play extends Command {
+    /**
+     * {@link Cmd_Play} クラスの新しいインスタンスを初期化します。
+     */
     @SuppressWarnings("unused")
     public Cmd_Play() {
         this.name = "play";
@@ -36,20 +44,12 @@ public class Cmd_Play extends Command {
         //noinspection HttpUrlsUsage
         if (query.startsWith("http://") || query.startsWith("https://")) {
             // URLの場合
-            executeWithUrl(event);
+            PlayerManager.getINSTANCE().loadAndPlay(event, event.getArgs(), event.getAuthor());
             return;
         }
 
         // 検索ワードの場合
-        executeWithQuery(event);
-    }
-
-    private void executeWithUrl(CommandEvent event) {
-        String url = event.getArgs();
-        PlayerManager.getINSTANCE().loadAndPlay(event, url, event.getAuthor());
-    }
-
-    private void executeWithQuery(CommandEvent event) {
-        ToneLib.replyError(event, "not implemented");
+        String searchQuery = String.format("ytsearch:%s", query);
+        PlayerManager.getINSTANCE().loadAndPlay(event, searchQuery, event.getAuthor());
     }
 }

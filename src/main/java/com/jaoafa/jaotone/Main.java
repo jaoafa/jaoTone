@@ -18,16 +18,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * jaoTone メインクラス
+ */
 public class Main {
     private static final Logger logger = LoggerFactory.getLogger("jaoTone");
     private static ToneConfig config;
 
+    /**
+     * メインメソッド
+     *
+     * @param args コマンドライン引数
+     */
     public static void main(String[] args) {
         logger.info("jaoTone is starting...");
 
         config = new ToneConfig();
         EventWaiter waiter = new EventWaiter();
-        CommandClient client = getCommandClient();
+        CommandClient client = getCommandClient(config.getPrefix());
 
         // ログイン
         try {
@@ -55,10 +63,10 @@ public class Main {
         logger.info("jaoTone is started.");
     }
 
-    static CommandClient getCommandClient() {
+    static CommandClient getCommandClient(String prefix) {
         CommandClientBuilder builder = new CommandClientBuilder();
 
-        builder.setPrefix("!!");
+        builder.setPrefix(prefix);
         builder.setActivity(null);
         builder.setOwnerId(config.getOwnerId());
         builder.setEmojis("✅", "⚠️", "❌");
@@ -126,6 +134,11 @@ public class Main {
         }
     }
 
+    /**
+     * jaoTone のロガーを取得します。
+     *
+     * @return jaoTone のロガー
+     */
     public static Logger getLogger() {
         return logger;
     }

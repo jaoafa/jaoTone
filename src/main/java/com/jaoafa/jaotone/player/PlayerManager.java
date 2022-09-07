@@ -23,11 +23,13 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
+/**
+ * トラックプレイヤーを管理するクラスです。
+ */
 public class PlayerManager {
     private static PlayerManager INSTANCE;
     private final AudioPlayerManager playerManager;
     private final Map<Long, GuildMusicManager> musicManagers;
-
 
     private PlayerManager() {
         this.musicManagers = new HashMap<>();
@@ -36,6 +38,11 @@ public class PlayerManager {
         AudioSourceManagers.registerLocalSource(playerManager);
     }
 
+    /**
+     * {@link PlayerManager} クラスのインスタンスを取得します。既存のインスタンスが存在しない場合は新しいインスタンスを生成します。
+     *
+     * @return {@link PlayerManager} クラスのインスタンス
+     */
     public static synchronized PlayerManager getINSTANCE() {
         if (INSTANCE == null) {
             INSTANCE = new PlayerManager();
@@ -43,6 +50,12 @@ public class PlayerManager {
         return INSTANCE;
     }
 
+    /**
+     * 指定された {@link Guild} に対応する {@link GuildMusicManager} を取得します。既存のインスタンスが存在しない場合は新しいインスタンスを生成します。
+     *
+     * @param guild 対象の {@link Guild}
+     * @return {@link GuildMusicManager} クラスのインスタンス
+     */
     public synchronized GuildMusicManager getGuildMusicManager(Guild guild) {
         long guildID = guild.getIdLong();
         GuildMusicManager musicManager = musicManagers.get(guildID);
@@ -54,6 +67,15 @@ public class PlayerManager {
         return musicManager;
     }
 
+    /**
+     * 指定したトラックをロード・再生するようにキューに追加します。<br>
+     * プレイリストの URL を指定した場合は、プレイリストの全トラックをキューに追加します。<br>
+     * <code>ytsearch:</code> または <code>scsearch:</code> を先頭に付けた場合は、検索結果の1件目をキューに追加します。
+     *
+     * @param event    コマンド実行時の {@link CommandEvent}
+     * @param trackUrl トラックの URL または検索クエリ
+     * @param adder    トラックを追加したユーザー
+     */
     public void loadAndPlay(CommandEvent event, String trackUrl, User adder) {
         GuildMusicManager musicManager = getGuildMusicManager(event.getGuild());
         playerManager.loadItemOrdered(musicManager, trackUrl, new AudioLoadResultHandler() {
@@ -67,6 +89,12 @@ public class PlayerManager {
 
             @Override
             public void playlistLoaded(AudioPlaylist playlist) {
+                if (playlist.isSearchResult()) {
+                    AudioTrack selectTrack = playlist.getTracks().get(0);
+                    trackLoaded(selectTrack);
+                    ToneLib.reply(event, "検索結果の一件目 `%s` を再生します。".formatted(selectTrack.getInfo().title));
+                    return;
+                }
                 Main.getLogger().info("playlistLoaded: " + playlist.getName() + " / " + playlist.getTracks().size());
                 for (AudioTrack track : playlist.getTracks()) {
                     track.setUserData(adder);
@@ -93,6 +121,13 @@ public class PlayerManager {
         });
     }
 
+    /**
+     * 指定した {@link Guild} の再生キュー Embed を取得します。
+     *
+     * @param guild 対象の {@link Guild}
+     * @param page  ページ番号
+     * @return 再生キュー Embed
+     */
     @Nullable
     public MessageCreateData getQueueEmbed(Guild guild, int page) {
         GuildMusicManager manager = PlayerManager.getINSTANCE().getGuildMusicManager(guild);

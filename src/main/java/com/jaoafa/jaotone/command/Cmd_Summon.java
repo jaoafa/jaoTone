@@ -4,11 +4,19 @@ import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jaoafa.jaotone.lib.ToneLib;
 
+/**
+ * コマンド: stop
+ * <p>
+ * コマンド実行者が参加しているボイスチャンネルに参加します。
+ */
 public class Cmd_Summon extends Command {
+    /**
+     * {@link Cmd_Summon} クラスの新しいインスタンスを初期化します。
+     */
     @SuppressWarnings("unused")
     public Cmd_Summon() {
         this.name = "summon";
-        this.help = "ボイスチャンネルに参加します。";
+        this.help = "コマンド実行者が参加しているボイスチャンネルに参加します。";
         this.arguments = "";
     }
 
@@ -19,6 +27,6 @@ public class Cmd_Summon extends Command {
             return;
         }
         event.getGuild().getAudioManager().openAudioConnection(event.getMember().getVoiceState().getChannel());
-        ToneLib.replySuccess(event, "ボイスチャンネルに参加しました。");
+        event.reactSuccess();
     }
 }

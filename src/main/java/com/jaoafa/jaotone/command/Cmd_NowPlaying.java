@@ -10,11 +10,19 @@ import net.dv8tion.jda.api.entities.User;
 
 import java.awt.*;
 
+/**
+ * コマンド: nowplaying
+ * <p>
+ * 再生中トラックの情報を表示します。
+ */
 public class Cmd_NowPlaying extends Command {
+    /**
+     * {@link Cmd_NowPlaying} クラスの新しいインスタンスを初期化します。
+     */
     @SuppressWarnings("unused")
     public Cmd_NowPlaying() {
         this.name = "nowplaying";
-        this.help = "再生中のトラックを表示します。";
+        this.help = "再生中トラックの情報を表示します。";
         this.arguments = "";
         this.aliases = new String[]{"np", "now"};
     }

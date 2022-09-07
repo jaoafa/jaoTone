@@ -5,7 +5,15 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jaoafa.jaotone.lib.ToneLib;
 import com.jaoafa.jaotone.player.PlayerManager;
 
+/**
+ * コマンド: skip
+ * <p>
+ * 再生中のトラックをスキップします。
+ */
 public class Cmd_Skip extends Command {
+    /**
+     * {@link Cmd_Skip} クラスの新しいインスタンスを初期化します。
+     */
     @SuppressWarnings("unused")
     public Cmd_Skip() {
         this.name = "skip";
