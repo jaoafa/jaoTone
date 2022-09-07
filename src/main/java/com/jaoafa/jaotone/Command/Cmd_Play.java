@@ -3,20 +3,15 @@ package com.jaoafa.jaotone.command;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jaoafa.jaotone.lib.ToneLib;
-import com.jaoafa.jaotone.lib.ToneQueue;
-import com.jaoafa.jaotone.lib.ToneTrack;
-import com.jaoafa.jaotone.lib.ToneTrackService;
-import net.dv8tion.jda.api.entities.Message;
-
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.regex.Matcher;
+import com.jaoafa.jaotone.player.PlayerManager;
 
 public class Cmd_Play extends Command {
+    @SuppressWarnings("unused")
     public Cmd_Play() {
         this.name = "play";
         this.help = "音楽を再生します。";
         this.arguments = "<LinkOrQuery>";
+        this.aliases = new String[]{"p", "add"};
     }
 
     @Override
@@ -27,6 +22,15 @@ public class Cmd_Play extends Command {
             ToneLib.replyError(event, "クエリが指定されていません。");
             return;
         }
+
+        if (!ToneLib.isJoinedVoiceChannel(event.getGuild())) {
+            if (event.getMember().getVoiceState() == null || !event.getMember().getVoiceState().inAudioChannel()) {
+                ToneLib.replyError(event, "ボイスチャンネルに参加していません。");
+                return;
+            }
+            event.getGuild().getAudioManager().openAudioConnection(event.getMember().getVoiceState().getChannel());
+        }
+
 
         // クエリがURLかどうかを判定する
         //noinspection HttpUrlsUsage
@@ -42,39 +46,7 @@ public class Cmd_Play extends Command {
 
     private void executeWithUrl(CommandEvent event) {
         String url = event.getArgs();
-
-        ToneTrackService provider = Arrays
-            .stream(ToneTrackService.values())
-            .filter(service -> service
-                .getProviderClass()
-                .getUrlPatterns()
-                .stream()
-                .anyMatch(pattern -> pattern.matcher(url).find()))
-            .findFirst()
-            .orElse(null);
-        if (provider == null) {
-            ToneLib.replyError(event, "指定されたURLはサポートされていません。");
-            return;
-        }
-
-        String videoId = provider
-            .getProviderClass()
-            .getUrlPatterns()
-            .stream()
-            .map(pattern -> pattern.matcher(url))
-            .filter(Matcher::find)
-            .map(matcher -> matcher.group("videoId"))
-            .filter(Objects::nonNull)
-            .findFirst()
-            .orElse(null);
-
-        ToneQueue queue = new ToneQueue(event.getGuild());
-        queue.add(new ToneTrack(provider, videoId, event.getAuthor()));
-
-        Message message = event.getMessage().reply(":new: 再生キューに追加しました。動画情報を取得しています…。").complete();
-
-        provider.getProviderClass().fetchDetails(videoId, message);
-        provider.getProviderClass().download(videoId);
+        PlayerManager.getINSTANCE().loadAndPlay(event, url);
     }
 
     private void executeWithQuery(CommandEvent event) {
