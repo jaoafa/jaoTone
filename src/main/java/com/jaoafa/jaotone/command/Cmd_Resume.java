@@ -1,8 +1,8 @@
-package com.jaoafa.jaotone.commandtemp;
+package com.jaoafa.jaotone.command;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import com.jaoafa.jaotone.libtemp.ToneLib;
+import com.jaoafa.jaotone.lib.ToneLib;
 import com.jaoafa.jaotone.player.PlayerManager;
 
 public class Cmd_Resume extends Command {

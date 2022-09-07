@@ -1,16 +1,17 @@
-package com.jaoafa.jaotone.commandtemp;
+package com.jaoafa.jaotone.command;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import com.jaoafa.jaotone.libtemp.ToneLib;
+import com.jaoafa.jaotone.lib.ToneLib;
 import com.jaoafa.jaotone.player.PlayerManager;
 
-public class Cmd_Pause extends Command {
+public class Cmd_Skip extends Command {
     @SuppressWarnings("unused")
-    public Cmd_Pause() {
-        this.name = "pause";
-        this.help = "再生中のトラックを一時停止します。";
+    public Cmd_Skip() {
+        this.name = "skip";
+        this.help = "再生中のトラックをスキップします。";
         this.arguments = "";
+        this.aliases = new String[]{"s"};
     }
 
     @Override
@@ -20,7 +21,10 @@ public class Cmd_Pause extends Command {
             return;
         }
 
-        PlayerManager.getINSTANCE().getGuildMusicManager(event.getGuild()).player.setPaused(true);
+        boolean result = PlayerManager.getINSTANCE().getGuildMusicManager(event.getGuild()).scheduler.nextTrack();
+        if (!result) {
+            event.reactError();
+        }
         event.reactSuccess();
     }
 }

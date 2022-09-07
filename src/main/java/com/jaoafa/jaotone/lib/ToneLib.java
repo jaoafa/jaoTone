@@ -1,4 +1,4 @@
-package com.jaoafa.jaotone.libtemp;
+package com.jaoafa.jaotone.lib;
 
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.entities.Guild;

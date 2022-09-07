@@ -2,7 +2,7 @@ package com.jaoafa.jaotone.player;
 
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jaoafa.jaotone.Main;
-import com.jaoafa.jaotone.libtemp.ToneLib;
+import com.jaoafa.jaotone.lib.ToneLib;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;

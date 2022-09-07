@@ -1,4 +1,4 @@
-package com.jaoafa.jaotone.libtemp;
+package com.jaoafa.jaotone.lib;
 
 import org.json.JSONObject;
 
