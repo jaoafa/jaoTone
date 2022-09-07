@@ -1,8 +1,8 @@
-package com.jaoafa.jaotone.command;
+package com.jaoafa.jaotone.commandtemp;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import com.jaoafa.jaotone.lib.ToneLib;
+import com.jaoafa.jaotone.libtemp.ToneLib;
 import com.jaoafa.jaotone.player.PlayerManager;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 

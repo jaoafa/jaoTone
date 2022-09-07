@@ -1,16 +1,17 @@
-package com.jaoafa.jaotone.command;
+package com.jaoafa.jaotone.commandtemp;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import com.jaoafa.jaotone.lib.ToneLib;
+import com.jaoafa.jaotone.libtemp.ToneLib;
 import com.jaoafa.jaotone.player.PlayerManager;
 
-public class Cmd_Pause extends Command {
+public class Cmd_Shuffle extends Command {
     @SuppressWarnings("unused")
-    public Cmd_Pause() {
-        this.name = "pause";
-        this.help = "再生中のトラックを一時停止します。";
+    public Cmd_Shuffle() {
+        this.name = "shuffle";
+        this.help = "キューをシャッフルします。";
         this.arguments = "";
+        this.aliases = new String[]{"sh", "resh"};
     }
 
     @Override
@@ -20,7 +21,7 @@ public class Cmd_Pause extends Command {
             return;
         }
 
-        PlayerManager.getINSTANCE().getGuildMusicManager(event.getGuild()).player.setPaused(true);
+        PlayerManager.getINSTANCE().getGuildMusicManager(event.getGuild()).scheduler.shuffle();
         event.reactSuccess();
     }
 }

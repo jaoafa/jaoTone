@@ -1,8 +1,8 @@
-package com.jaoafa.jaotone.command;
+package com.jaoafa.jaotone.commandtemp;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import com.jaoafa.jaotone.lib.ToneLib;
+import com.jaoafa.jaotone.libtemp.ToneLib;
 
 public class Cmd_Summon extends Command {
     @SuppressWarnings("unused")
