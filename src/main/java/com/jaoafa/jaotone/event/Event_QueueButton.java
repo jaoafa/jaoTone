@@ -1,6 +1,6 @@
 package com.jaoafa.jaotone.event;
 
-import com.jaoafa.jaotone.lib.ToneQueue;
+import com.jaoafa.jaotone.player.PlayerManager;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -21,7 +21,7 @@ public class Event_QueueButton extends ListenerAdapter {
         String[] args = event.getComponentId().split(":");
         int page = Integer.parseInt(args[1]);
 
-        MessageCreateData messageCreateData = ToneQueue.getQueueEmbed(event.getGuild(), page);
+        MessageCreateData messageCreateData = PlayerManager.getINSTANCE().getQueueEmbed(event.getGuild(), page);
         if (messageCreateData == null) {
             if (refMessage == null) {
                 event.getChannel().sendMessage(":x: キューが空です。").queue();

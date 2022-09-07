@@ -61,6 +61,7 @@ public class Main {
         builder.setPrefix("!!");
         builder.setActivity(null);
         builder.setOwnerId(config.getOwnerId());
+        builder.setEmojis("✅", "⚠️", "❌");
 
         registerCommand(builder);
 
@@ -92,7 +93,6 @@ public class Main {
         }
         builder.addCommands(commands.toArray(new Command[0]));
     }
-
 
     static void registerEvent(JDABuilder jdaBuilder) {
         final String eventPackage = "com.jaoafa.jaotone.event";
