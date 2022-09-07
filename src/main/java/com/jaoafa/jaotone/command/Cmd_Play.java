@@ -46,7 +46,7 @@ public class Cmd_Play extends Command {
 
     private void executeWithUrl(CommandEvent event) {
         String url = event.getArgs();
-        PlayerManager.getINSTANCE().loadAndPlay(event, url);
+        PlayerManager.getINSTANCE().loadAndPlay(event, url, event.getAuthor());
     }
 
     private void executeWithQuery(CommandEvent event) {

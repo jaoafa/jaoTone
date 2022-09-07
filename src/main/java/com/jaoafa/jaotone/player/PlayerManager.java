@@ -12,6 +12,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
@@ -53,12 +54,13 @@ public class PlayerManager {
         return musicManager;
     }
 
-    public void loadAndPlay(CommandEvent event, String trackUrl) {
+    public void loadAndPlay(CommandEvent event, String trackUrl, User adder) {
         GuildMusicManager musicManager = getGuildMusicManager(event.getGuild());
         playerManager.loadItemOrdered(musicManager, trackUrl, new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack track) {
                 Main.getLogger().info("trackLoaded: " + track.getInfo().title + " (" + track.getInfo().uri + ")");
+                track.setUserData(adder);
                 musicManager.scheduler.queue(track);
                 event.reactSuccess();
             }
@@ -67,6 +69,7 @@ public class PlayerManager {
             public void playlistLoaded(AudioPlaylist playlist) {
                 Main.getLogger().info("playlistLoaded: " + playlist.getName() + " / " + playlist.getTracks().size());
                 for (AudioTrack track : playlist.getTracks()) {
+                    track.setUserData(adder);
                     musicManager.scheduler.queue(track);
                 }
                 ToneLib.reply(event, "プレイリストから%d件を再生キューに追加しました。".formatted(playlist.getTracks().size()));
@@ -109,7 +112,10 @@ public class PlayerManager {
         for (AudioTrack track : tracks.stream().skip((page - 1) * 5L).limit(5).toList()) {
             String fieldTitle = "%d. `%s`".formatted(num, track.getInfo().title);
             String url = track.getInfo().uri;
-            String fieldText = "Author: `%s`\nURL: %s".formatted(track.getInfo().author, url);
+            User adder = track.getUserData(User.class);
+            String fieldText = "Author: `%s`\nURL: %s\nAdder: %s".formatted(track.getInfo().author,
+                                                                            url,
+                                                                            adder.getAsMention());
             builder.addField(fieldTitle, fieldText, false);
             num++;
         }
