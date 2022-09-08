@@ -50,7 +50,7 @@ public class ToneConfig {
     }
 
     /**
-     * Bot のプレフィックスを取得します。指定されていない場合、<code>!</code> を返します。
+     * Bot のプレフィックスを取得します。設定されていない場合、<code>!</code> を返します。
      *
      * @return Bot のプレフィックス
      */
