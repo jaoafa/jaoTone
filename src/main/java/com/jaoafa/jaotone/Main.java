@@ -31,7 +31,7 @@ public class Main {
      * @param args コマンドライン引数
      */
     public static void main(String[] args) {
-        logger.info("jaoTone is starting...");
+        logger.info("jaoTone を起動しています…");
 
         config = new ToneConfig();
         EventWaiter waiter = new EventWaiter();
@@ -56,11 +56,11 @@ public class Main {
 
             jdabuilder.build().awaitReady();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Discord へのログインに失敗", e);
             return;
         }
 
-        logger.info("jaoTone is started.");
+        logger.info("jaoTone を起動しました。");
     }
 
     static CommandClient getCommandClient(String prefix) {
@@ -95,8 +95,7 @@ public class Main {
                 commands.add(theClass.getDeclaredConstructor().newInstance());
                 logger.info("%s: コマンドの登録に成功しました".formatted(cmdName));
             } catch (Throwable throwable) {
-                throwable.printStackTrace();
-                logger.error("%s: コマンドの登録に失敗しました".formatted(cmdName));
+                logger.error("%s: コマンドの登録に失敗しました".formatted(cmdName), throwable);
             }
         }
         builder.addCommands(commands.toArray(new Command[0]));
@@ -128,8 +127,7 @@ public class Main {
                 logger.info("%s: イベントの登録に成功しました。".formatted(eventName));
             } catch (NoSuchMethodException | InstantiationException |
                      IllegalAccessException | InvocationTargetException e) {
-                logger.error("%s: イベントの登録に失敗しました。".formatted(eventName));
-                e.printStackTrace();
+                logger.error("%s: イベントの登録に失敗しました。".formatted(eventName), e);
             }
         }
     }
