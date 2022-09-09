@@ -32,7 +32,8 @@ public class Cmd_Skip extends Command {
         boolean result = PlayerManager.getINSTANCE().getGuildMusicManager(event.getGuild()).scheduler.nextTrack();
         if (!result) {
             event.reactError();
+        } else {
+            event.reactSuccess();
         }
-        event.reactSuccess();
     }
 }
