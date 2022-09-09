@@ -40,16 +40,14 @@ public class Main {
         // ログイン
         try {
             JDABuilder jdabuilder = JDABuilder
-                .createDefault(config.getToken())
-                .enableIntents(
-                    GatewayIntent.GUILD_MEMBERS,
-                    GatewayIntent.GUILD_PRESENCES,
-                    GatewayIntent.MESSAGE_CONTENT,
-                    GatewayIntent.GUILD_MESSAGE_REACTIONS
-                )
-                .setAutoReconnect(true)
-                .setBulkDeleteSplittingEnabled(false)
-                .setContextEnabled(false);
+                    .createDefault(config.getToken())
+                    .enableIntents(GatewayIntent.GUILD_MEMBERS,
+                            GatewayIntent.GUILD_PRESENCES,
+                            GatewayIntent.MESSAGE_CONTENT,
+                            GatewayIntent.GUILD_MESSAGE_REACTIONS)
+                    .setAutoReconnect(true)
+                    .setBulkDeleteSplittingEnabled(false)
+                    .setContextEnabled(false);
 
             jdabuilder.addEventListeners(waiter, client);
             registerEvent(jdabuilder);
@@ -125,8 +123,8 @@ public class Main {
 
                 jdaBuilder.addEventListeners(instance);
                 logger.info("%s: イベントの登録に成功しました。".formatted(eventName));
-            } catch (NoSuchMethodException | InstantiationException |
-                     IllegalAccessException | InvocationTargetException e) {
+            } catch (NoSuchMethodException | InstantiationException | IllegalAccessException |
+                     InvocationTargetException e) {
                 logger.error("%s: イベントの登録に失敗しました。".formatted(eventName), e);
             }
         }

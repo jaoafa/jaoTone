@@ -40,20 +40,18 @@ public class Cmd_Repeat extends Command {
         }
 
         TrackScheduler.RepeatMode mode = Arrays
-            .stream(TrackScheduler.RepeatMode.values())
-            .filter(m -> m.name().equalsIgnoreCase(event.getArgs()))
-            .findFirst()
-            .orElse(null);
+                .stream(TrackScheduler.RepeatMode.values())
+                .filter(m -> m.name().equalsIgnoreCase(event.getArgs()))
+                .findFirst()
+                .orElse(null);
 
         if (mode == null) {
-            ToneLib.replyError(event, "指定されたリピートモードが見つかりませんでした。%s を指定できます。".formatted(
-                Arrays
+            String argSuggestion = Arrays
                     .stream(TrackScheduler.RepeatMode.values())
                     .map(TrackScheduler.RepeatMode::name)
                     .map(s -> "`" + s + "`")
-                    .collect(
-                        Collectors.joining(", "))
-            ));
+                    .collect(Collectors.joining(", "));
+            ToneLib.replyError(event, "指定されたリピートモードが見つかりませんでした。%s を指定できます。".formatted(argSuggestion));
             return;
         }
 

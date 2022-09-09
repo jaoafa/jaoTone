@@ -114,9 +114,9 @@ public class PlayerManager {
             public void loadFailed(FriendlyException e) {
                 Main.getLogger().info("loadFailed: " + e.getMessage());
                 ToneLib.replyError(event,
-                                   "トラックの読み込みに失敗しました: `%s(%s) -> %s`".formatted(e.getClass().getSimpleName(),
-                                                                                    e.severity.name(),
-                                                                                    e.getMessage()));
+                        "トラックの読み込みに失敗しました: `%s(%s) -> %s`".formatted(e.getClass().getSimpleName(),
+                                e.severity.name(),
+                                e.getMessage()));
             }
         });
     }
@@ -149,8 +149,8 @@ public class PlayerManager {
             String url = track.getInfo().uri;
             User adder = track.getUserData(User.class);
             String fieldText = "Author: `%s`\nURL: %s\nAdder: %s".formatted(track.getInfo().author,
-                                                                            url,
-                                                                            adder.getAsMention());
+                    url,
+                    adder.getAsMention());
             builder.addField(fieldTitle, fieldText, false);
             num++;
         }
@@ -159,8 +159,8 @@ public class PlayerManager {
 
         Button prev = Button.secondary("queue:" + (page - 1), "前のページ").withDisabled(page == 1);
         Button next = Button
-            .secondary("queue:" + (page + 1), "次のページ")
-            .withDisabled(page == (int) Math.ceil((double) tracks.size() / 5));
+                .secondary("queue:" + (page + 1), "次のページ")
+                .withDisabled(page == (int) Math.ceil((double) tracks.size() / 5));
 
         return new MessageCreateBuilder().setEmbeds(builder.build()).addActionRow(prev, next).build();
     }
