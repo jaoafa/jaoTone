@@ -3,6 +3,7 @@ package com.jaoafa.jaotone.command;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jaoafa.jaotone.lib.ToneLib;
+import com.jaoafa.jaotone.player.GuildMusicManager;
 import com.jaoafa.jaotone.player.PlayerManager;
 
 /**
@@ -29,8 +30,9 @@ public class Cmd_Disconnect extends Command {
             return;
         }
 
-        PlayerManager.getINSTANCE().getGuildMusicManager(event.getGuild()).player.stopTrack();
-        PlayerManager.getINSTANCE().getGuildMusicManager(event.getGuild()).scheduler.getQueue().clear();
+        GuildMusicManager manager = PlayerManager.getINSTANCE().getGuildMusicManager(event.getGuild());
+        manager.player.stopTrack();
+        manager.scheduler.getQueue().clear();
         event.getGuild().getAudioManager().closeAudioConnection();
         event.reactSuccess();
     }
