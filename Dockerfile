@@ -7,7 +7,7 @@ RUN mvn -B package; echo ""
 COPY src /build/src
 RUN mvn -B package
 
-FROM amazoncorretto:17-alpine
+FROM amazoncorretto:17
 
 WORKDIR /app
 
