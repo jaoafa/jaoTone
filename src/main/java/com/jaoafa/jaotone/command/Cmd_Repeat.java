@@ -23,6 +23,7 @@ public class Cmd_Repeat extends Command {
         this.name = "repeat";
         this.help = "トラックをリピートします。";
         this.arguments = "<DISABLED|SINGLE|ALL>";
+        this.aliases = new String[]{"loop"};
     }
 
     @Override
