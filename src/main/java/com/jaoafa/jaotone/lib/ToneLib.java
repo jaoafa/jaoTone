@@ -62,7 +62,7 @@ public class ToneLib {
         seconds %= 60;
         minutes %= 60;
         hours %= 24;
-        return (days > 0 ? days + "日" : "") + (hours > 0 ? hours + ":" : "") + (minutes > 0 ?
+        return (days > 0 ? days + "日" : "") + (hours > 0 ? hours + "時間" : "") + (minutes > 0 ?
                 minutes + "分" :
                 "") + seconds + "秒";
     }
