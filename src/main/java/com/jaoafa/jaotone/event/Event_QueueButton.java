@@ -5,7 +5,6 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * イベント: QueueButton
@@ -16,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class Event_QueueButton extends ListenerAdapter {
     @Override
-    public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
+    public void onButtonInteraction(ButtonInteractionEvent event) {
         if (!event.getComponentId().startsWith("queue:")) {
             return;
         }

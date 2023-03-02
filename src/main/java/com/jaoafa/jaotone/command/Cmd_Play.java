@@ -5,6 +5,9 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jaoafa.jaotone.lib.ToneLib;
 import com.jaoafa.jaotone.player.PlayerManager;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 /**
  * コマンド: play
  * <p>
@@ -40,11 +43,15 @@ public class Cmd_Play extends Command {
         }
 
 
-        // クエリがURLかどうかを判定する
+        // クエリがURLかパスかどうかを判定する
         //noinspection HttpUrlsUsage
         if (query.startsWith("http://") || query.startsWith("https://")) {
             // URLの場合
             PlayerManager.getINSTANCE().loadAndPlay(event, event.getArgs(), event.getAuthor());
+            return;
+        } else if (Files.exists(Path.of(query))) {
+            // パスの場合
+            PlayerManager.getINSTANCE().loadAndPlay(event, query, event.getAuthor());
             return;
         }
 
