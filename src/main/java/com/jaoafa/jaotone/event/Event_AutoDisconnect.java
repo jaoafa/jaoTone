@@ -1,5 +1,6 @@
 package com.jaoafa.jaotone.event;
 
+import com.jaoafa.jaotone.player.PlayerManager;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
@@ -30,6 +31,7 @@ public class Event_AutoDisconnect extends ListenerAdapter {
         if (channel.getMembers().stream().anyMatch(member -> !member.getUser().isBot())) {
             return;
         }
+        PlayerManager.destroyGuildMusicManager(guild);
         guild.getAudioManager().closeAudioConnection();
     }
 }

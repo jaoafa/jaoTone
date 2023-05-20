@@ -29,7 +29,7 @@ public class Cmd_Skip extends Command {
             return;
         }
 
-        boolean result = PlayerManager.getINSTANCE().getGuildMusicManager(event.getGuild()).scheduler.nextTrack();
+        boolean result = PlayerManager.getGuildMusicManager(event.getGuild()).scheduler.nextTrack();
         if (!result) {
             event.reactError();
         } else {

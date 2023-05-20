@@ -27,7 +27,7 @@ public class Event_QueueButton extends ListenerAdapter {
         String[] args = event.getComponentId().split(":");
         int page = Integer.parseInt(args[1]);
 
-        MessageCreateData messageCreateData = PlayerManager.getINSTANCE().getQueueEmbed(event.getGuild(), page);
+        MessageCreateData messageCreateData = PlayerManager.getQueueEmbed(event.getGuild(), page);
         if (messageCreateData == null) {
             if (refMessage == null) {
                 event.getChannel().sendMessage(":x: キューが空です。").queue();

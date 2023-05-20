@@ -7,9 +7,7 @@ import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -78,7 +76,15 @@ public class TrackScheduler extends AudioEventAdapter {
         if (!endReason.mayStartNext) {
             return;
         }
-        nextTrack();
+        Timer timer = new Timer(false);
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                nextTrack();
+                timer.cancel();
+            }
+        };
+        timer.schedule(task, 300);
     }
 
     /**

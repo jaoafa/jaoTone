@@ -30,7 +30,7 @@ public class Cmd_Pause extends Command {
             return;
         }
 
-        PlayerManager.getINSTANCE().getGuildMusicManager(event.getGuild()).player.setPaused(true);
+        PlayerManager.getGuildMusicManager(event.getGuild()).player.setPaused(true);
         event.reactSuccess();
     }
 }

@@ -34,7 +34,7 @@ public class Cmd_NowPlaying extends Command {
             return;
         }
 
-        AudioTrack track = PlayerManager.getINSTANCE().getGuildMusicManager(event.getGuild()).player.getPlayingTrack();
+        AudioTrack track = PlayerManager.getGuildMusicManager(event.getGuild()).player.getPlayingTrack();
         if (track == null) {
             ToneLib.replyError(event, "再生中のトラックがありません。");
             return;
