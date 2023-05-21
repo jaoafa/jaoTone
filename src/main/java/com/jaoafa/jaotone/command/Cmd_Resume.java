@@ -30,7 +30,7 @@ public class Cmd_Resume extends Command {
             return;
         }
 
-        PlayerManager.getINSTANCE().getGuildMusicManager(event.getGuild()).player.setPaused(false);
+        PlayerManager.getGuildMusicManager(event.getGuild()).player.setPaused(false);
         event.reactSuccess();
     }
 }

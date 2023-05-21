@@ -29,7 +29,7 @@ public class Cmd_Shuffle extends Command {
             return;
         }
 
-        PlayerManager.getINSTANCE().getGuildMusicManager(event.getGuild()).scheduler.shuffle();
+        PlayerManager.getGuildMusicManager(event.getGuild()).scheduler.shuffle();
         event.reactSuccess();
     }
 }

@@ -47,16 +47,16 @@ public class Cmd_Play extends Command {
         //noinspection HttpUrlsUsage
         if (query.startsWith("http://") || query.startsWith("https://")) {
             // URLの場合
-            PlayerManager.getINSTANCE().loadAndPlay(event, event.getArgs(), event.getAuthor());
+            PlayerManager.loadAndPlay(event, event.getArgs(), event.getAuthor());
             return;
         } else if (Files.exists(Path.of(query))) {
             // パスの場合
-            PlayerManager.getINSTANCE().loadAndPlay(event, query, event.getAuthor());
+            PlayerManager.loadAndPlay(event, query, event.getAuthor());
             return;
         }
 
         // 検索ワードの場合
         String searchQuery = String.format("ytsearch:%s", query);
-        PlayerManager.getINSTANCE().loadAndPlay(event, searchQuery, event.getAuthor());
+        PlayerManager.loadAndPlay(event, searchQuery, event.getAuthor());
     }
 }

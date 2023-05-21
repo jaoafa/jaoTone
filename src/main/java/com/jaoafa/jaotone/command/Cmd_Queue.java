@@ -36,7 +36,7 @@ public class Cmd_Queue extends Command {
                 return;
             }
         }
-        MessageCreateData messageCreateData = PlayerManager.getINSTANCE().getQueueEmbed(event.getGuild(), page);
+        MessageCreateData messageCreateData = PlayerManager.getQueueEmbed(event.getGuild(), page);
         if (messageCreateData == null) {
             ToneLib.replyError(event, "キューが空です。");
             return;

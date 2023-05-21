@@ -33,7 +33,7 @@ public class Cmd_Repeat extends Command {
             return;
         }
 
-        TrackScheduler scheduler = PlayerManager.getINSTANCE().getGuildMusicManager(event.getGuild()).scheduler;
+        TrackScheduler scheduler = PlayerManager.getGuildMusicManager(event.getGuild()).scheduler;
 
         if (event.getArgs().isEmpty()) {
             ToneLib.reply(event, "現在のリピート設定: `%s`".formatted(scheduler.getRepeatMode().getName()));

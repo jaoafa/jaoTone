@@ -29,7 +29,7 @@ public class Cmd_Clear extends Command {
             return;
         }
 
-        GuildMusicManager manager = PlayerManager.getINSTANCE().getGuildMusicManager(event.getGuild());
+        GuildMusicManager manager = PlayerManager.getGuildMusicManager(event.getGuild());
         manager.player.stopTrack();
         manager.scheduler.getQueue().clear();
         event.reactSuccess();
