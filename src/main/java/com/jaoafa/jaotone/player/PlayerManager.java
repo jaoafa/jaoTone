@@ -7,11 +7,19 @@ import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
+import com.sedmelluq.discord.lavaplayer.source.bandcamp.BandcampAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.beam.BeamAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.getyarn.GetyarnAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
@@ -32,7 +40,14 @@ public class PlayerManager {
 
     static {
         playerManager = new DefaultAudioPlayerManager();
-        AudioSourceManagers.registerRemoteSources(playerManager);
+        playerManager.registerSourceManager(new YoutubeAudioSourceManager(true, null, null));
+        playerManager.registerSourceManager(SoundCloudAudioSourceManager.createDefault());
+        playerManager.registerSourceManager(new BandcampAudioSourceManager());
+        playerManager.registerSourceManager(new VimeoAudioSourceManager());
+        playerManager.registerSourceManager(new TwitchStreamAudioSourceManager());
+        playerManager.registerSourceManager(new BeamAudioSourceManager());
+        playerManager.registerSourceManager(new GetyarnAudioSourceManager());
+        playerManager.registerSourceManager(new YtDlpAudioSourceManager());
         AudioSourceManagers.registerLocalSource(playerManager);
     }
 
@@ -72,15 +87,14 @@ public class PlayerManager {
      *
      * @param event    コマンド実行時の {@link CommandEvent}
      * @param trackUrl トラックの URL または検索クエリ
-     * @param adder    トラックを追加したユーザー
      */
-    public static void loadAndPlay(CommandEvent event, String trackUrl, User adder) {
+    public static void loadAndPlay(CommandEvent event, String trackUrl) {
         GuildMusicManager musicManager = getGuildMusicManager(event.getGuild());
         playerManager.loadItemOrdered(musicManager, trackUrl, new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack track) {
                 Main.getLogger().info("trackLoaded: " + track.getInfo().title + " (" + track.getInfo().uri + ")");
-                track.setUserData(adder);
+                track.setUserData(event.getMessage());
                 musicManager.scheduler.queue(track);
                 event.reactSuccess();
             }
@@ -95,7 +109,7 @@ public class PlayerManager {
                 }
                 Main.getLogger().info("playlistLoaded: " + playlist.getName() + " / " + playlist.getTracks().size());
                 for (AudioTrack track : playlist.getTracks()) {
-                    track.setUserData(adder);
+                    track.setUserData(event.getMessage());
                     musicManager.scheduler.queue(track);
                 }
                 ToneLib.reply(event, "プレイリストから%d件を再生キューに追加しました。".formatted(playlist.getTracks().size()));
@@ -115,6 +129,7 @@ public class PlayerManager {
                         "トラックの読み込みに失敗しました: `%s(%s) -> %s`".formatted(e.getClass().getSimpleName(),
                                 e.severity.name(),
                                 e.getMessage()));
+                e.printStackTrace();
             }
         });
     }
@@ -145,7 +160,8 @@ public class PlayerManager {
         for (AudioTrack track : tracks.stream().skip((page - 1) * 5L).limit(5).toList()) {
             String fieldTitle = "%d. `%s`".formatted(num, track.getInfo().title);
             String url = track.getInfo().uri;
-            User adder = track.getUserData(User.class);
+            Message message = track.getUserData(Message.class);
+            User adder = message.getAuthor();
             String fieldText = "Author: `%s`\nURL: %s\nAdder: %s".formatted(track.getInfo().author,
                     url,
                     adder.getAsMention());

@@ -6,6 +6,7 @@ import com.jaoafa.jaotone.lib.ToneLib;
 import com.jaoafa.jaotone.player.PlayerManager;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 
 import java.awt.*;
@@ -39,7 +40,9 @@ public class Cmd_NowPlaying extends Command {
             ToneLib.replyError(event, "再生中のトラックがありません。");
             return;
         }
-        User adder = track.getUserData(User.class);
+        Message message = track.getUserData(Message.class);
+        User adder = message.getAuthor();
+
         EmbedBuilder embed = new EmbedBuilder()
                 .setTitle(track.getInfo().title)
                 .setAuthor(track.getInfo().author)
