@@ -25,7 +25,6 @@ public class YtDlpAudioSourceManager implements AudioSourceManager {
 
     @Override
     public AudioItem loadItem(AudioPlayerManager manager, AudioReference reference) {
-        System.out.println("YtDlpAudioSourceManager: " + reference.identifier);
         // 動画情報を取得
         ProcessBuilder pb = new ProcessBuilder("yt-dlp", "-j", "--no-playlist", "--no-warnings", "--no-progress", "--no-continue", "--no-cache-dir", "--ignore-errors", reference.identifier);
         pb.redirectErrorStream(true);
@@ -33,8 +32,6 @@ public class YtDlpAudioSourceManager implements AudioSourceManager {
             Process p = pb.start();
             p.waitFor(10, TimeUnit.SECONDS);
             if (p.exitValue() != 0) {
-                System.out.println("exitValue: " + p.exitValue());
-                System.out.println("output: " + new String(p.getInputStream().readAllBytes()));
                 return null;
             }
             String raw = new String(p.getInputStream().readAllBytes());
