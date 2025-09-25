@@ -7,7 +7,7 @@ RUN mvn -B package; echo ""
 COPY src /build/src
 RUN mvn -B package
 
-FROM amazoncorretto:21.0.8
+FROM amazoncorretto:25
 
 # hadolint ignore=DL3033
 RUN yum install -y python3 python3-pip tar xz && \
