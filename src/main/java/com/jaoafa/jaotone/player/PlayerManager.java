@@ -21,7 +21,8 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import net.dv8tion.jda.api.components.actionrow.ActionRow;
+import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
@@ -176,6 +177,6 @@ public class PlayerManager {
                 .secondary("queue:" + (page + 1), "次のページ")
                 .withDisabled(page == (int) Math.ceil((double) tracks.size() / 5));
 
-        return new MessageCreateBuilder().setEmbeds(builder.build()).addActionRow(prev, next).build();
+        return new MessageCreateBuilder().setEmbeds(builder.build()).addComponents(ActionRow.of(prev, next)).build();
     }
 }

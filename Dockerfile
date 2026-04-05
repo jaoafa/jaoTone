@@ -27,4 +27,4 @@ WORKDIR /app
 COPY --from=builder /build/target/jaoTone-jar-with-dependencies.jar .
 
 ENTRYPOINT []
-CMD ["java", "-jar", "jaoTone-jar-with-dependencies.jar"]
+CMD ["java", "--enable-native-access=ALL-UNNAMED", "-jar", "jaoTone-jar-with-dependencies.jar"]
