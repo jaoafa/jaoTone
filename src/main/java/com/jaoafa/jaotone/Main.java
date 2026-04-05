@@ -5,7 +5,9 @@ import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import com.jaoafa.jaotone.lib.ToneConfig;
+import club.minnced.discord.jdave.interop.JDaveSessionFactory;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.audio.AudioModuleConfig;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import org.reflections.Reflections;
@@ -39,6 +41,10 @@ public class Main {
 
         // ログイン
         try {
+            // Discord DAVE (E2E 暗号化) プロトコルの設定
+            AudioModuleConfig audioModuleConfig = new AudioModuleConfig()
+                    .withDaveSessionFactory(new JDaveSessionFactory());
+
             JDABuilder jdabuilder = JDABuilder
                     .createDefault(config.getToken())
                     .enableIntents(GatewayIntent.GUILD_MEMBERS,
@@ -47,7 +53,8 @@ public class Main {
                             GatewayIntent.GUILD_MESSAGE_REACTIONS)
                     .setAutoReconnect(true)
                     .setBulkDeleteSplittingEnabled(false)
-                    .setContextEnabled(false);
+                    .setContextEnabled(false)
+                    .setAudioModuleConfig(audioModuleConfig);
 
             jdabuilder.addEventListeners(waiter, client);
             registerEvent(jdabuilder);
@@ -91,9 +98,9 @@ public class Main {
 
             try {
                 commands.add(theClass.getDeclaredConstructor().newInstance());
-                logger.info("%s: コマンドの登録に成功しました".formatted(cmdName));
+                logger.info("{}: コマンドの登録に成功しました", cmdName);
             } catch (Throwable throwable) {
-                logger.error("%s: コマンドの登録に失敗しました".formatted(cmdName), throwable);
+                logger.error("{}: コマンドの登録に失敗しました", cmdName, throwable);
             }
         }
         builder.addCommands(commands.toArray(new Command[0]));
@@ -122,10 +129,10 @@ public class Main {
                 }
 
                 jdaBuilder.addEventListeners(instance);
-                logger.info("%s: イベントの登録に成功しました。".formatted(eventName));
+                logger.info("{}: イベントの登録に成功しました。", eventName);
             } catch (NoSuchMethodException | InstantiationException | IllegalAccessException |
                      InvocationTargetException e) {
-                logger.error("%s: イベントの登録に失敗しました。".formatted(eventName), e);
+                logger.error("{}: イベントの登録に失敗しました。", eventName, e);
             }
         }
     }

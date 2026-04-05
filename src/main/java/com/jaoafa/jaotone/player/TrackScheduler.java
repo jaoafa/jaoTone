@@ -39,7 +39,7 @@ public class TrackScheduler extends AudioEventAdapter {
             return;
         }
         if (!queue.offer(track)) {
-            Main.getLogger().error("Failed to queue track: " + track.getInfo().title);
+            Main.getLogger().error("Failed to queue track: {}", track.getInfo().title);
         }
     }
 
