@@ -1,4 +1,4 @@
-FROM maven:3 AS builder
+FROM maven:3-eclipse-temurin-25 AS builder
 
 WORKDIR /build
 COPY pom.xml /build/pom.xml
