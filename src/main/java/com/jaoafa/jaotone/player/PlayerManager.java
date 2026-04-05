@@ -14,7 +14,7 @@ import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioSourceM
 import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager;
 import dev.lavalink.youtube.YoutubeAudioSourceManager;
-import dev.lavalink.youtube.clients.AndroidTestsuiteWithThumbnail;
+import dev.lavalink.youtube.clients.AndroidWithThumbnail;
 import dev.lavalink.youtube.clients.MusicWithThumbnail;
 import dev.lavalink.youtube.clients.WebWithThumbnail;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
@@ -48,7 +48,7 @@ public class PlayerManager {
         playerManager.registerSourceManager(new YoutubeAudioSourceManager(
             true,
             new dev.lavalink.youtube.clients.skeleton.Client[]{
-                new MusicWithThumbnail(), new WebWithThumbnail(), new AndroidTestsuiteWithThumbnail()
+                new MusicWithThumbnail(), new WebWithThumbnail(), new AndroidWithThumbnail()
             }
         ));
         playerManager.registerSourceManager(SoundCloudAudioSourceManager.createDefault());
