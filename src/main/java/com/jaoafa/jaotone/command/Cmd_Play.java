@@ -4,6 +4,7 @@ import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jaoafa.jaotone.lib.ToneLib;
 import com.jaoafa.jaotone.player.PlayerManager;
+import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -39,7 +40,13 @@ public class Cmd_Play extends Command {
                 ToneLib.replyError(event, "ボイスチャンネルに参加していません。");
                 return;
             }
-            event.getGuild().getAudioManager().openAudioConnection(event.getMember().getVoiceState().getChannel());
+            // JDA v6 では inAudioChannel() が true でも getChannel() が null を返す可能性がある
+            AudioChannelUnion channel = event.getMember().getVoiceState().getChannel();
+            if (channel == null) {
+                ToneLib.replyError(event, "ボイスチャンネルに参加していません。");
+                return;
+            }
+            event.getGuild().getAudioManager().openAudioConnection(channel);
         }
 
 

@@ -94,7 +94,7 @@ public class PlayerManager {
         playerManager.loadItemOrdered(musicManager, trackUrl, new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack track) {
-                Main.getLogger().info("trackLoaded: " + track.getInfo().title + " (" + track.getInfo().uri + ")");
+                Main.getLogger().info("trackLoaded: {} ({})", track.getInfo().title, track.getInfo().uri);
                 track.setUserData(event.getMessage());
                 musicManager.scheduler.queue(track);
                 event.reactSuccess();
@@ -108,7 +108,7 @@ public class PlayerManager {
                     ToneLib.reply(event, "検索結果の一件目 `%s` を再生します。".formatted(selectTrack.getInfo().title));
                     return;
                 }
-                Main.getLogger().info("playlistLoaded: " + playlist.getName() + " / " + playlist.getTracks().size());
+                Main.getLogger().info("playlistLoaded: {} / {}", playlist.getName(), playlist.getTracks().size());
                 for (AudioTrack track : playlist.getTracks()) {
                     track.setUserData(event.getMessage());
                     musicManager.scheduler.queue(track);
@@ -125,7 +125,7 @@ public class PlayerManager {
 
             @Override
             public void loadFailed(FriendlyException e) {
-                Main.getLogger().info("loadFailed: " + e.getMessage());
+                Main.getLogger().info("loadFailed: {}", e.getMessage());
                 ToneLib.replyError(event,
                         "トラックの読み込みに失敗しました: `%s(%s) -> %s`".formatted(e.getClass().getSimpleName(),
                                 e.severity.name(),
