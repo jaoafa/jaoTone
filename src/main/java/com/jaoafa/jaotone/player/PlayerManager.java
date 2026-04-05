@@ -13,11 +13,12 @@ import com.sedmelluq.discord.lavaplayer.source.getyarn.GetyarnAudioSourceManager
 import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import dev.lavalink.youtube.YoutubeAudioSourceManager;
 import dev.lavalink.youtube.clients.AndroidWithThumbnail;
 import dev.lavalink.youtube.clients.MusicWithThumbnail;
 import dev.lavalink.youtube.clients.WebWithThumbnail;
-import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
+import dev.lavalink.youtube.clients.skeleton.Client;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -44,10 +45,9 @@ public class PlayerManager {
 
     static {
         playerManager = new DefaultAudioPlayerManager();
-        // YouTube の API 変更に追従するコミュニティ保守版ソースマネージャーを使用
         playerManager.registerSourceManager(new YoutubeAudioSourceManager(
             true,
-            new dev.lavalink.youtube.clients.skeleton.Client[]{
+            new Client[]{
                 new MusicWithThumbnail(), new WebWithThumbnail(), new AndroidWithThumbnail()
             }
         ));

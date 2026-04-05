@@ -114,7 +114,6 @@
             <artifactId>lavaplayer</artifactId>
             <version>2.2.6</version>
         </dependency>
-        <!-- YouTube の API 変更に追従するコミュニティ保守版ソースマネージャー（lavaplayer 2.x 対応） -->
         <dependency>
             <groupId>dev.lavalink.youtube</groupId>
             <artifactId>v2</artifactId>
