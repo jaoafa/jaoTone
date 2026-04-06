@@ -8,11 +8,5 @@
   "timezone": "Asia/Tokyo",
   "dependencyDashboard": false,
   "automerge": true,
-  "branchConcurrentLimit": 0,
-  "packageRules": [
-    {
-      "matchPackagePrefixes": ["dev.lavalink.youtube"],
-      "registryUrls": ["https://maven.lavalink.dev/releases"]
-    }
-  ]
+  "branchConcurrentLimit": 0
 }
